@@ -44,29 +44,31 @@ import org.json.simple.parser.ParseException;
 public class MessageUtil {
     
     
-    public static final ChatColor INFO = ChatColor.AQUA;
-    public static final ChatColor ERROR = ChatColor.RED;
-    public static final ChatColor ERROR_STRESSED = ChatColor.DARK_RED;
-    public static final ChatColor STRESSED = ChatColor.GREEN;
-    public static final ChatColor HIGHLIGHT = ChatColor.GOLD;
-    public static final ChatColor HIGHLIGHT_STRESSED = ChatColor.YELLOW;
+    public final ChatColor INFO = ChatColor.AQUA;
+    public final ChatColor ERROR = ChatColor.RED;
+    public final ChatColor ERROR_STRESSED = ChatColor.DARK_RED;
+    public final ChatColor STRESSED = ChatColor.GREEN;
+    public final ChatColor HIGHLIGHT = ChatColor.GOLD;
+    public final ChatColor HIGHLIGHT_STRESSED = ChatColor.YELLOW;
     
     
-    private static String PREFIX   = "[Plugin] ";
+    private String PREFIX   = "[Plugin] ";
     
-    private static String INDENTED = "    ";
+    private String INDENTED = "    ";
     
     private static final int PAGE_LENGTH = 13;
     
-    public static String getPREFIX() {
+    private static final int LENGTH_OF_HOVER_LINE = 40;
+
+    public String getPREFIX() {
         return PREFIX;
     }
     
-    public static String getNOPREFIX() {
+    public String getNOPREFIX() {
         return INDENTED;
     }
     
-    public static void setPluginName(String pluginName) {
+    public void setPluginName(String pluginName) {
         PREFIX = "["+pluginName+"] ";
         INDENTED = "";
         for(int i = 0;i<pluginName.length()+2;i++) {
@@ -74,23 +76,27 @@ public class MessageUtil {
         }
     }
     
-    public static String infoPrefix() {
+    public String infoPrefix() {
         return INFO+PREFIX;
     }
     
-    public static String errorPrefix() {
+    public String errorPrefix() {
         return ERROR+PREFIX;
     }
     
-    public static String infoNoPrefix() {
+    public String highlightPrefix() {
+        return HIGHLIGHT+PREFIX;
+    }
+    
+    public String infoNoPrefix() {
         return INFO+INDENTED;
     }
     
-    public static String errorNoPrefix() {
+    public String errorNoPrefix() {
         return ERROR+INDENTED;
     }
         
-    public static void sendErrorMessage(CommandSender sender, String message) {
+    public void sendErrorMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             sender.sendMessage(ERROR + PREFIX + message);
         } else {
@@ -98,7 +104,7 @@ public class MessageUtil {
         }
     }
     
-    public static void sendInfoMessage(CommandSender sender, String message) {
+    public void sendInfoMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             sender.sendMessage(INFO + PREFIX + message);
         } else {
@@ -106,7 +112,7 @@ public class MessageUtil {
         }
     }
     
-    public static void sendIndentedInfoMessage(CommandSender sender, String message) {
+    public void sendIndentedInfoMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             sender.sendMessage(INFO + INDENTED + message);
         } else {
@@ -114,7 +120,7 @@ public class MessageUtil {
         }
     }
     
-    public static void sendNoPrefixInfoMessage(CommandSender sender, String message) {
+    public void sendNoPrefixInfoMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             sender.sendMessage(INFO + message);
         } else {
@@ -122,7 +128,7 @@ public class MessageUtil {
         }
     }
     
-    public static void sendBroadcastMessage(String string) {
+    public void sendBroadcastMessage(String string) {
         Bukkit.getServer().broadcastMessage(INFO + PREFIX + string);
     }
     
@@ -148,7 +154,7 @@ public class MessageUtil {
         }    
     }
         
-    public static void sendFancyFileListMessage(Player recipient, FancyMessage header,
+    public void sendFancyFileListMessage(Player recipient, FancyMessage header,
                                                     File baseDir, FileFilter filter, String[] args,
                                                     String listCommand, String selectCommand, boolean showSubDir) {
         // args may be length 0 or include: [relative Dir] [#page]
@@ -183,20 +189,22 @@ public class MessageUtil {
             if(parentDir == null) {
                 parentDir = "";
             }
-            list.add(new FancyMessage(MessageType.INFO_NO_PREFIX)
-                    .addClickable(ChatColor.BLUE+".. parent directory", listCommand+" "+parentDir));
+            list.add(new FancyMessage(MessageType.INFO_NO_PREFIX, this)
+                    .addClickable(ChatColor.BLUE+".. parent directory", listCommand+" "+parentDir)
+                    .setRunDirect());
         }
         if(showSubDir) {
             File[] dirs = dir.listFiles(FileUtil.getDirFilter());
             for(File subDir:dirs) {
-                list.add(new FancyMessage(MessageType.INFO_NO_PREFIX)
+                list.add(new FancyMessage(MessageType.INFO_NO_PREFIX, this)
                         .addClickable(ChatColor.BLUE+"<"+subDir.getName()+">", listCommand+" "
-                                      +(relativeDir.length()>0?relativeDir+"/":"")+subDir.getName()));
+                                      +(relativeDir.length()>0?relativeDir+"/":"")+subDir.getName())
+                        .setRunDirect());
             }
         }      
         for(File file:files) {
             String filename = file.getName().substring(0,file.getName().lastIndexOf('.'));
-            list.add(new FancyMessage(MessageType.WHITE)
+            list.add(new FancyMessage(MessageType.WHITE, this)
                     .addClickable(ChatColor.DARK_AQUA+filename,selectCommand+" "+(relativeDir.length()>0?relativeDir+"/":"")+filename)
                     .addSimple(ChatColor.WHITE+" "+getDescription(file)));
         }
@@ -232,7 +240,7 @@ public class MessageUtil {
         sendFancyListMessage(recipient, fancyHeader, fancyList, listCommand, page);
     }*/
     
-    public static void sendFancyListMessage(Player recipient, FancyMessage header,
+    public void sendFancyListMessage(Player recipient, FancyMessage header,
                                                 List<FancyMessage> list, 
                                                 String listCommand, int page) {
         // list command must be like: /listCommand [#page]
@@ -243,7 +251,7 @@ public class MessageUtil {
         header.addSimple(" [page " +page+"/"+maxPage+"]").
                send(recipient);
         if(page>1) {
-            new FancyMessage(MessageType.INFO_INDENTED)
+            new FancyMessage(MessageType.INFO_INDENTED, this)
                 .addClickable(ChatColor.BLUE+"---^ page up ^---", listCommand+" "+(page-1))
                 .setRunDirect()
                 .send(recipient);
@@ -252,7 +260,7 @@ public class MessageUtil {
             list.get(i).send(recipient);
         }
         if(page<maxPage) {
-            new FancyMessage(MessageType.INFO_INDENTED)
+            new FancyMessage(MessageType.INFO_INDENTED, this)
                 .addClickable(ChatColor.BLUE+"---v page down v--", listCommand+" "+(page+1))
                 .setRunDirect()
                 .send(recipient);
@@ -291,6 +299,86 @@ public class MessageUtil {
         return list.get(NumericUtil.getRandom(0, list.size() - 1));
     }
     
+    public String hoverFormat(String hoverMessage,String headerSeparator, boolean header) {
+        class MyScanner {
+            private final Scanner scanner;
+            public String currentToken=null;
+            public MyScanner(String string) {
+                scanner = new Scanner(string);
+                scanner.useDelimiter(" ");
+                if(scanner.hasNext()) {
+                    currentToken = scanner.next();
+                }
+            }
+            public String next() {
+                if(scanner.hasNext()) {
+                    currentToken = scanner.next();
+                } else {
+                    currentToken = null;
+                }
+                return currentToken;
+            }
+            public boolean hasCurrent() {
+                return currentToken != null;
+            }
+            public boolean hasNext() {
+                return scanner.hasNext();
+            }
+        }
+        String result = (header?HIGHLIGHT:HIGHLIGHT_STRESSED)+"";
+        int separator = -1;
+        if(header) {
+            separator = hoverMessage.indexOf(headerSeparator);
+            result = result.concat(hoverMessage.substring(0,separator+1)+"\n");
+        }
+        MyScanner scanner = new MyScanner(hoverMessage.substring(separator+1));
+        while (scanner.hasCurrent()) {
+            String line = HIGHLIGHT_STRESSED+scanner.currentToken+" ";
+            scanner.next();
+            while(scanner.hasCurrent() && line.length()+scanner.currentToken.length()<LENGTH_OF_HOVER_LINE) {
+                if(scanner.currentToken.equals("\n")) {
+                    break;
+                } else {
+                    line = line.concat(scanner.currentToken+" ");
+                    scanner.next();
+                }
+            }
+            if(scanner.hasCurrent()) {
+                line = line.concat("\n");
+                if(scanner.currentToken.equals("\n")) {
+                    scanner.next();
+                }
+            }
+            result = result.concat(line);
+        }
+        return result;
+    }
+    
+
+    public void sendPlayerOnlyCommandError(CommandSender cs) {
+        sendErrorMessage(cs, "This command can only be run by a player.");
+    }
+    
+    public void sendNoPermissionError(CommandSender cs) {
+        sendErrorMessage(cs, "Sorry, you don't have permission.");
+    }
+
+    public void sendInvalidSubcommandError(CommandSender cs) {
+        sendErrorMessage(cs, "Invalid subcommand.");
+    }
+    
+    public void sendNotEnoughArgumentsError(CommandSender cs) {
+        sendErrorMessage(cs, "Not enough arguments.");
+    }
+
+    public void sendFileNotFoundError(CommandSender cs) {
+        sendErrorMessage(cs, "File not found.");
+    }
+
+    public void sendIOError(CommandSender cs) {
+        sendErrorMessage(cs, "There was an IOError. Ask developer or admin for help.");
+    }
+
 }
 
 

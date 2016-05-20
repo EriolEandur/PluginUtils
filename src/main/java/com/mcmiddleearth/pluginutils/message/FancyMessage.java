@@ -24,13 +24,25 @@ public final class FancyMessage {
     @Getter
     private ChatColor baseColor;
 
-    public FancyMessage() {
-        this(MessageType.INFO);
+    public FancyMessage(MessageUtil messageUtil) {
+        this(MessageType.INFO, messageUtil);
     }
     
-    public FancyMessage(MessageType messageType) {
+    public FancyMessage(MessageType messageType, MessageUtil messageUtil) {
         baseColor = messageType.getBaseColor();
-        addSimple(messageType.getPrefix());
+        String prefix = "";
+        switch(messageType) {
+            case INFO:
+            case ERROR:
+            case HIGHLIGHT:
+                prefix = messageUtil.getPREFIX();
+                break;
+            case INFO_INDENTED:
+            case ERROR_INDENTED:
+            case HIGHLIGHT_INDENTED:
+                prefix = messageUtil.getNOPREFIX();
+        }
+        addSimple(prefix);
     }
     
     public FancyMessage addSimple(String text){
@@ -81,11 +93,11 @@ public final class FancyMessage {
             else {
                 rawText = rawText.concat(",");
             }
-            rawText = rawText.concat("{text:\""+message+"\",color:\""+baseColorString()+"\"");
+            rawText = rawText.concat("{\"text\":\""+message+"\",\"color\":\""+baseColorString()+"\"");
             String command = data.get(message)[0];
             boolean clickEvent = false;
             if(command!=null) {
-                rawText = rawText.concat(",clickEvent:{ action:"+action+",value:\"");
+                rawText = rawText.concat(",\"clickEvent\":{\"action\":\""+action+"\",\"value\":\"");
                 rawText = rawText.concat(command+"\"}");
                 clickEvent = true;
             }
@@ -94,7 +106,7 @@ public final class FancyMessage {
                 if(clickEvent) {
                     rawText = rawText.concat(",");
                 }
-                rawText = rawText.concat("hoverEvent:{ action:show_text,value:\"");
+                rawText = rawText.concat("\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"");
                 rawText = rawText.concat(command+"\"}");
             }
             rawText = rawText.concat("}");

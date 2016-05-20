@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 MCME
+ * Copyright (C) 2015 MCME
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,32 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.pluginutils.message;
+package com.mcmiddleearth.pluginutils.confirmation;
 
-import lombok.Getter;
+import com.mcmiddleearth.pluginutils.message.MessageUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.ConversationPrefix;
 
 /**
  *
  * @author Eriol_Eandur
  */
-public enum MessageType {
-    
-    INFO                (ChatColor.AQUA),
-    ERROR               (ChatColor.RED),
-    HIGHLIGHT           (ChatColor.GOLD),
-    INFO_INDENTED       (ChatColor.AQUA),
-    ERROR_INDENTED      (ChatColor.RED),
-    HIGHLIGHT_INDENTED  (ChatColor.GOLD),
-    INFO_NO_PREFIX      (ChatColor.AQUA),
-    ERROR_NO_PREFIX     (ChatColor.RED),
-    HIGHLIGHT_NO_PREFIX (ChatColor.GOLD),
-    WHITE               (ChatColor.WHITE);
-    
-    @Getter
-    private final ChatColor baseColor;
-    
-    private MessageType(ChatColor color) {
-        baseColor = color;
+class ConfirmationPrefix implements ConversationPrefix {
+
+    @Override
+    public String getPrefix(ConversationContext cc) {
+        MessageUtil messageUtil = (MessageUtil) cc.getSessionData("messageUtil");
+        return messageUtil.highlightPrefix();
     }
+    
 }
