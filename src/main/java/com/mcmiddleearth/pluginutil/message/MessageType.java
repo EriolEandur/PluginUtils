@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.pluginutils.message;
+package com.mcmiddleearth.pluginutil.message;
 
 import lombok.Getter;
 import org.bukkit.ChatColor;

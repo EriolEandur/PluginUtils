@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.pluginutils;
+package com.mcmiddleearth.pluginutil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -41,14 +41,17 @@ public class TitleUtil {
     
     public static void showTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
         try {
+            //throw new NumberFormatException();
             sendTitle(player, fadeIn, stay, fadeOut, title, subtitle);
         } catch(Error | Exception e) {
             Logger.getLogger(TitleUtil.class.getName()).log(Level.WARNING, "Error in Minigames plugin while accessing NMS class. This plugin version was not made for your server. Please look for an update. Plugin will use Bukkit.dispatchCommand to send '/title ...' instead of directly sending title packets.");
-            title = ChatColor.translateAlternateColorCodes('&', title);
-            subtitle = ChatColor.translateAlternateColorCodes('&', subtitle);
+            //title = ChatColor.translateAlternateColorCodes('&', title);
+            //subtitle = ChatColor.translateAlternateColorCodes('&', subtitle);
             setTimes_Bukkit(player,fadeIn, stay, fadeOut);
-            setTitle_Bukkit(player, title);
-            setSubtitle_Bukkit(player, subtitle);
+            if(title!=null) 
+                setTitle_Bukkit(player, title);
+            if(subtitle!=null) 
+                setSubtitle_Bukkit(player, subtitle);
         }
     }
     
@@ -57,11 +60,11 @@ public class TitleUtil {
     }
     
     private static void setTitle_Bukkit(Player player, String title) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "title "+player.getName()+" title "+"{text:\""+title+"\"}");
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "title "+player.getName()+" title "+"{\"text\":\""+title+"\"}");
     }
     
     private static void setSubtitle_Bukkit(Player player, String subtitle) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "title "+player.getName()+" subtitle "+"\""+subtitle+"\"");
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "title "+player.getName()+" subtitle "+"{\"text\":\""+subtitle+"\"}");
     }
     
     public static void showTitleAll(List<Player> playerList, List<Player> except, String title, String subtitle) {
@@ -115,6 +118,7 @@ public class TitleUtil {
     }
 
     private static void sendTitle(Player player, Integer fadeIn, Integer stay, Integer fadeOut, String title, String subtitle) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
+Logger.getGlobal().info("sendTitle - "+player.getName()+"  "+title+"  "+subtitle+"  "+fadeIn+"  "+stay+"  "+fadeOut);        
         if (title != null) {
             title = ChatColor.translateAlternateColorCodes('&', title);
             title = title.replaceAll("%player%", player.getDisplayName());
@@ -134,6 +138,10 @@ public class TitleUtil {
             Object subtitlePacket = subtitleConstructor.newInstance(enumSubtitle, chatSubtitle, fadeIn, stay, fadeOut);
             NMSUtil.sendPacket(player, subtitlePacket);
         }
+        Object enumTimes = NMSUtil.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TIMES").get(null);
+        Constructor<?> titleConstructor = NMSUtil.getNMSClass("PacketPlayOutTitle").getConstructor(NMSUtil.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0], NMSUtil.getNMSClass("IChatBaseComponent"), int.class, int.class, int.class);
+        Object titlePacket = titleConstructor.newInstance(enumTimes, null, fadeIn, stay, fadeOut);
+        NMSUtil.sendPacket(player, titlePacket);
     }
     
 

@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mcmiddleearth.pluginutils.message;
+package com.mcmiddleearth.pluginutil.message;
 
-import static com.mcmiddleearth.pluginutils.message.MessageUtil.sendRawMessage;
+import static com.mcmiddleearth.pluginutil.message.MessageUtil.sendRawMessage;
 import java.util.LinkedHashMap;
+import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -76,8 +77,6 @@ public final class FancyMessage {
     }
 
     public FancyMessage send(Player recipient) {
-    //public static void sendFancyMessage(Player sender, FancyMessage fancyMessage) {
-    //    LinkedHashMap<String,String[]> data = fancyMessage.getData();
         String rawText = "[";
         String action;
         if(runDirect) {
@@ -87,6 +86,13 @@ public final class FancyMessage {
         }
         boolean first = true;
         for(String message: data.keySet()) {
+            String command = data.get(message)[0];
+            String hoverText = data.get(message)[1];
+                if(message.indexOf("\"")>-1) {
+                }
+            message = replaceQuotationMarks(message);
+                if(message.indexOf("\"")>-1) {
+                }
             if(first) {
                 first = false; 
             }
@@ -94,20 +100,24 @@ public final class FancyMessage {
                 rawText = rawText.concat(",");
             }
             rawText = rawText.concat("{\"text\":\""+message+"\",\"color\":\""+baseColorString()+"\"");
-            String command = data.get(message)[0];
             boolean clickEvent = false;
             if(command!=null) {
+                command = replaceQuotationMarks(command);
                 rawText = rawText.concat(",\"clickEvent\":{\"action\":\""+action+"\",\"value\":\"");
                 rawText = rawText.concat(command+"\"}");
                 clickEvent = true;
             }
-            command = data.get(message)[1];
-            if(command!=null) {
+            if(hoverText!=null) {
+                if(hoverText.indexOf("\"")>-1) {
+                }
+                hoverText = replaceQuotationMarks(hoverText);
+                if(hoverText.indexOf("\"")>-1) {
+                }
                 if(clickEvent) {
                     rawText = rawText.concat(",");
                 }
                 rawText = rawText.concat("\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"");
-                rawText = rawText.concat(command+"\"}");
+                rawText = rawText.concat(hoverText+"\"}");
             }
             rawText = rawText.concat("}");
         }
@@ -116,6 +126,9 @@ public final class FancyMessage {
         return this;
     }
     
+    private String replaceQuotationMarks(String string) {
+        return string.replaceAll("\"", "__stRe__\"").replaceAll("__stRe__", "\\\\");
+    }
     private String baseColorString() {
         switch(baseColor) {
             case BLACK:

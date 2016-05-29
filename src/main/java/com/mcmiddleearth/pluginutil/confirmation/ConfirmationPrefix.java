@@ -14,18 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.pluginutils.confirmation;
+package com.mcmiddleearth.pluginutil.confirmation;
 
-import org.bukkit.entity.Player;
+import com.mcmiddleearth.pluginutil.message.MessageUtil;
+import org.bukkit.ChatColor;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.ConversationPrefix;
 
 /**
  *
  * @author Eriol_Eandur
  */
-public interface Confirmationable {
-    
-    public void confirmed(Player player, Object[] data);
-    
-    public void cancelled(Player player, Object[] data);
+class ConfirmationPrefix implements ConversationPrefix {
+
+    @Override
+    public String getPrefix(ConversationContext cc) {
+        MessageUtil messageUtil = (MessageUtil) cc.getSessionData("messageUtil");
+        return messageUtil.highlightPrefix();
+    }
     
 }

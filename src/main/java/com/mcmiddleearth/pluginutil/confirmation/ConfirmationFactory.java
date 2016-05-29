@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.pluginutils.confirmation;
+package com.mcmiddleearth.pluginutil.confirmation;
 
-import com.mcmiddleearth.pluginutils.message.MessageUtil;
+import com.mcmiddleearth.pluginutil.message.MessageUtil;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ConversationAbandonedListener;

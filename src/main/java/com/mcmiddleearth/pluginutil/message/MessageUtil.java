@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mcmiddleearth.pluginutils.message;
+package com.mcmiddleearth.pluginutil.message;
 
-import com.mcmiddleearth.pluginutils.FileUtil;
-import com.mcmiddleearth.pluginutils.NMSUtil;
-import com.mcmiddleearth.pluginutils.NumericUtil;
+import com.mcmiddleearth.pluginutil.FileUtil;
+import com.mcmiddleearth.pluginutil.NMSUtil;
+import com.mcmiddleearth.pluginutil.NumericUtil;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
@@ -151,6 +151,7 @@ public class MessageUtil {
         } catch(Error | Exception e ) {
             Logger.getLogger(MessageUtil.class.getName()).log(Level.WARNING, "Error in Minigames plugin while accessing NMS class. This plugin version was not made for your server. Please look for an update. Plugin will use Bukkit.dispatchCommand to send '/tellraw ...' instead of directly sending message packets.");
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + sender.getName()+ " " + message);
+Logger.getGlobal().info(message);
         }    
     }
         

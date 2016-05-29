@@ -1,5 +1,5 @@
 name: PluginUtils
-main: com.mcmiddleearth.pluginutils.PluginUtilsPlugin
+main: com.mcmiddleearth.pluginutil.PluginUtilsPlugin
 version: 1.1.0
 author: Eriol_Eandur
 load: STARTUP
