@@ -118,7 +118,6 @@ public class TitleUtil {
     }
 
     private static void sendTitle(Player player, Integer fadeIn, Integer stay, Integer fadeOut, String title, String subtitle) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
-Logger.getGlobal().info("sendTitle - "+player.getName()+"  "+title+"  "+subtitle+"  "+fadeIn+"  "+stay+"  "+fadeOut);        
         if (title != null) {
             title = ChatColor.translateAlternateColorCodes('&', title);
             title = title.replaceAll("%player%", player.getDisplayName());
