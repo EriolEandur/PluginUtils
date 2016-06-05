@@ -9,6 +9,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -50,6 +51,21 @@ public class PlayerUtil {
             }
         }
         return false;
+    }
+    
+    private static boolean hasOffHand = true;
+    
+    public static ItemStack getItemInMainHand(Player player) {
+        try {
+            if(hasOffHand) {
+                return player.getInventory().getItemInMainHand();
+            } else {
+                return player.getInventory().getItemInHand();
+            }
+        } catch(NoSuchMethodError e) {
+            hasOffHand = false;
+            return player.getInventory().getItemInHand();
+        }
     }
     
 }

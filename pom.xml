@@ -12,7 +12,7 @@
     </properties>
     <build>
     <!-- <sourceDirectory>${project.build.directory}/generated-sources/delombok</sourceDirectory> -->
-        
+      
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -62,7 +62,7 @@
         <dependency>
                 <groupId>org.bukkit</groupId>
                 <artifactId>bukkit</artifactId>
-                <version>1.8.8-R0.1-SNAPSHOT</version>
+                <version>1.9.2-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
         </dependency>
         <dependency>

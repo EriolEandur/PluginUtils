@@ -24,6 +24,7 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -182,7 +183,6 @@ Logger.getGlobal().info(message);
             sendErrorMessage(recipient, "Base Directory not found.");
             return;
         }            
-        File[] files = dir.listFiles(filter);
         List<FancyMessage> list = new ArrayList<>();
         header.addSimple(" "+ relativeDir);
         if(!dir.equals(baseDir)) {
@@ -203,6 +203,8 @@ Logger.getGlobal().info(message);
                         .setRunDirect());
             }
         }      
+        File[] files = dir.listFiles(filter);
+        Arrays.sort(files);
         for(File file:files) {
             String filename = file.getName().substring(0,file.getName().lastIndexOf('.'));
             list.add(new FancyMessage(MessageType.WHITE, this)
@@ -221,25 +223,6 @@ Logger.getGlobal().info(message);
         }
         return relativeDir;
     }
-    
-    /*public static void sendClickableListMessage(Player recipient, LinkedHashMap<String,String> header,
-                                                List<LinkedHashMap<String,String>> list, 
-                                                String listCommand, int page) {
-        // list command must be like: /listCommand [#page]
-        LinkedHashMap<String,String[]> fancyHeader = new LinkedHashMap<>();
-        for(String key:header.keySet()) {
-            fancyHeader.put(key, new String[]{header.get(key),null});
-        }
-        List<LinkedHashMap<String,String[]>> fancyList = new ArrayList<>();
-        for(LinkedHashMap<String,String> entry: list) {
-            LinkedHashMap<String,String[]> fancyEntry = new LinkedHashMap<>();
-            for(String key: entry.keySet()) {
-                fancyEntry.put(key, new String[]{entry.get(key),null});
-            }
-            fancyList.add(fancyEntry);
-        }
-        sendFancyListMessage(recipient, fancyHeader, fancyList, listCommand, page);
-    }*/
     
     public void sendFancyListMessage(Player recipient, FancyMessage header,
                                                 List<FancyMessage> list, 
