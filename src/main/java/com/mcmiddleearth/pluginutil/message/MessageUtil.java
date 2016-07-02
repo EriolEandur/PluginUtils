@@ -45,12 +45,12 @@ import org.json.simple.parser.ParseException;
 public class MessageUtil {
     
     
-    public final ChatColor INFO = ChatColor.AQUA;
-    public final ChatColor ERROR = ChatColor.RED;
-    public final ChatColor ERROR_STRESSED = ChatColor.DARK_RED;
-    public final ChatColor STRESSED = ChatColor.GREEN;
-    public final ChatColor HIGHLIGHT = ChatColor.GOLD;
-    public final ChatColor HIGHLIGHT_STRESSED = ChatColor.YELLOW;
+    public ChatColor INFO = ChatColor.AQUA;
+    public ChatColor ERROR = ChatColor.RED;
+    public ChatColor ERROR_STRESSED = ChatColor.DARK_RED;
+    public ChatColor STRESSED = ChatColor.GREEN;
+    public ChatColor HIGHLIGHT = ChatColor.GOLD;
+    public ChatColor HIGHLIGHT_STRESSED = ChatColor.YELLOW;
     
     
     private String PREFIX   = "[Plugin] ";

@@ -6,10 +6,13 @@
 package com.mcmiddleearth.pluginutil.message;
 
 import static com.mcmiddleearth.pluginutil.message.MessageUtil.sendRawMessage;
-import java.util.LinkedHashMap;
+import com.mcmiddleearth.pluginutil.message.config.FancyMessageConfigUtil;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 /**
@@ -18,12 +21,15 @@ import org.bukkit.entity.Player;
  */
 public final class FancyMessage {
 
-    private final LinkedHashMap<String,String[]> data = new LinkedHashMap<>();
+    private final List<String[]> data = new ArrayList<>();
 
     private boolean runDirect = false;
     
     @Getter
     private ChatColor baseColor;
+    
+    @Getter
+    private MessageUtil messageUtil;
 
     public FancyMessage(MessageUtil messageUtil) {
         this(MessageType.INFO, messageUtil);
@@ -31,6 +37,7 @@ public final class FancyMessage {
     
     public FancyMessage(MessageType messageType, MessageUtil messageUtil) {
         baseColor = messageType.getBaseColor();
+        this.messageUtil = messageUtil;
         String prefix = "";
         switch(messageType) {
             case INFO:
@@ -46,26 +53,32 @@ public final class FancyMessage {
         addSimple(prefix);
     }
     
+    public FancyMessage(MessageType messageType, MessageUtil messageUtil, ChatColor baseColor) {
+        this(messageType, messageUtil);
+        this.baseColor = baseColor;
+    }
+
+    
     public FancyMessage addSimple(String text){
-        data.put(text,new String[]{null,null});
+        data.add(new String[]{text,null,null});
         return this;
     }
 
     public FancyMessage addClickable(String text, String onClickCommand) {
-        data.put(text,new String[]{onClickCommand,null});
+        data.add(new String[]{text,onClickCommand,null});
         return this;
     }
 
     public FancyMessage addTooltipped(String text, String onHoverText) {
-        data.put(text,new String[]{null,onHoverText});
+        data.add(new String[]{text,null,onHoverText});
         return this;
     }
 
     public FancyMessage addFancy(String text, String onClickCommand, String onHoverText) {
-        data.put(text,new String[]{onClickCommand,onHoverText});
+        data.add(new String[]{text,onClickCommand,onHoverText});
         return this;
     }
-
+    
     public FancyMessage setBaseColor(ChatColor color) {
         baseColor = color;
         return this;
@@ -85,13 +98,14 @@ public final class FancyMessage {
             action = "suggest_command";
         }
         boolean first = true;
-        for(String message: data.keySet()) {
-            String command = data.get(message)[0];
-            String hoverText = data.get(message)[1];
-                if(message.indexOf("\"")>-1) {
+        for(String[] messageData: data) {
+            String message = messageData[0];
+            String command = messageData[1];
+            String hoverText = messageData[2];
+                if(message.contains("\"")) {
                 }
             message = replaceQuotationMarks(message);
-                if(message.indexOf("\"")>-1) {
+                if(message.contains("\"")) {
                 }
             if(first) {
                 first = false; 
@@ -100,35 +114,48 @@ public final class FancyMessage {
                 rawText = rawText.concat(",");
             }
             rawText = rawText.concat("{\"text\":\""+message+"\",\"color\":\""+baseColorString()+"\"");
-            boolean clickEvent = false;
+            //boolean clickEvent = false;
+/*Logger.getGlobal().info("*"+command+"###"+hoverText+"*");
+            if(command !=null && command.equals("open_url") && hoverText!=null) {
+                rawText = rawText.concat(",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"");
+                rawText = rawText.concat(hoverText+"\"}");
+            } else {*/
             if(command!=null) {
+                String thisAction = action;
+                if(command.startsWith("http")) {
+                    thisAction = "open_url";
+                }
                 command = replaceQuotationMarks(command);
-                rawText = rawText.concat(",\"clickEvent\":{\"action\":\""+action+"\",\"value\":\"");
+                rawText = rawText.concat(",\"clickEvent\":{\"action\":\""+thisAction+"\",\"value\":\"");
                 rawText = rawText.concat(command+"\"}");
-                clickEvent = true;
+                //clickEvent = true;
             }
             if(hoverText!=null) {
-                if(hoverText.indexOf("\"")>-1) {
-                }
                 hoverText = replaceQuotationMarks(hoverText);
-                if(hoverText.indexOf("\"")>-1) {
+                if(hoverText.contains("\"")) {
                 }
-                if(clickEvent) {
-                    rawText = rawText.concat(",");
-                }
-                rawText = rawText.concat("\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"");
+                //if(clickEvent) {
+                //    rawText = rawText.concat(",");
+                //}
+                rawText = rawText.concat(",\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"");
                 rawText = rawText.concat(hoverText+"\"}");
             }
             rawText = rawText.concat("}");
         }
         rawText = rawText.concat("]");
+Logger.getGlobal().info("SEND RAW **************\n"+rawText);
         sendRawMessage(recipient, rawText);
         return this;
+    }
+    
+    public void saveToConfig(ConfigurationSection config) {
+        FancyMessageConfigUtil.store(data, config);
     }
     
     private String replaceQuotationMarks(String string) {
         return string.replaceAll("\"", "__stRe__\"").replaceAll("__stRe__", "\\\\");
     }
+    
     private String baseColorString() {
         switch(baseColor) {
             case BLACK:

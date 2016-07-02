@@ -5,13 +5,16 @@
  */
 package com.mcmiddleearth.pluginutil;
 
+import com.mojang.authlib.GameProfile;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -30,6 +33,8 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  *
@@ -153,6 +158,9 @@ public class BlockUtil {
                     blockData.put("type", ((Skull)block.getState()).getSkullType().name());
                     blockData.put("rotation", ((Skull)block.getState()).getRotation().name());
                     blockData.put("owner", ((Skull)block.getState()).getOwner());
+                    if(((Skull)block.getState()).getSkullType().equals(SkullType.PLAYER)) {
+                        blockData.put("headItem", serializeHead((Skull)block.getState()));
+                    }
                     break;
             }
             blockDataList.add(blockData);
@@ -193,6 +201,10 @@ public class BlockUtil {
                         break;
                     case SKULL:
                         ((Skull) state).setSkullType(SkullType.valueOf((String) data.get("type")));
+                        if(((Skull)state).getSkullType().equals(SkullType.PLAYER)) {
+                            deserializeHead(state.getBlock(), (ItemStack)data.get("headItem"));
+                        }
+                        state = state.getBlock().getState();
                         ((Skull) state).setRotation(BlockFace.valueOf((String) data.get("rotation")));
                         ((Skull) state).setOwner((String) data.get("owner"));
                         break;
@@ -289,6 +301,52 @@ public class BlockUtil {
                 return false;
         }
     }
-  
+ 
+    private static void deserializeHead(Block block, ItemStack head) {
+        try {
+            BlockState blockState = block.getState();
+            blockState.setType(Material.SKULL);
+            blockState.update(true, false);
+            blockState = block.getState();
+            Skull skullData = (Skull) blockState;
+            skullData.setSkullType(SkullType.PLAYER);
+            Field profileField = head.getItemMeta().getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            GameProfile profile = (GameProfile) profileField.get(head.getItemMeta());
+            profileField = skullData.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            profileField.set(skullData, profile);
+            skullData.setRawData((byte)1);
+            skullData.setRotation(BlockFace.NORTH_NORTH_EAST);
+            skullData.update(true, false);
+        } catch (NoSuchFieldException | SecurityException e) {
+            Bukkit.getLogger().log(Level.SEVERE, "No such method exception during reflection.", e);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            Bukkit.getLogger().log(Level.SEVERE, "Unable to use reflection.", e);
+        }
+    }
+
+    private static ItemStack serializeHead(Skull skullBlockState) {
+        try {
+            Field profileField = skullBlockState.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            GameProfile profile = (GameProfile) profileField.get(skullBlockState);
+
+            ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+            ItemMeta headMeta = head.getItemMeta();
+            
+            profileField = headMeta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            profileField.set(headMeta, profile);
+            head.setItemMeta(headMeta);
+            return head;
+        } catch (NoSuchFieldException | SecurityException e) {
+            Bukkit.getLogger().log(Level.SEVERE, "No such method exception during reflection.", e);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            Bukkit.getLogger().log(Level.SEVERE, "Unable to use reflection.", e);
+        }
+        return null;
+    }
+
 
 }
