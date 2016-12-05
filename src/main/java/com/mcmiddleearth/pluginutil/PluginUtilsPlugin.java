@@ -5,6 +5,7 @@
  */
 package com.mcmiddleearth.pluginutil;
 
+import com.mcmiddleearth.pluginutil.developer.DevCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -14,4 +15,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class PluginUtilsPlugin extends JavaPlugin {
         
+    
+    public void onEnable() {
+        getCommand("dev").setExecutor(new DevCommand());
+    }
 }

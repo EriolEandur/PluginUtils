@@ -152,7 +152,6 @@ public class MessageUtil {
         } catch(Error | Exception e ) {
             Logger.getLogger(MessageUtil.class.getName()).log(Level.WARNING, "Error in Minigames plugin while accessing NMS class. This plugin version was not made for your server. Please look for an update. Plugin will use Bukkit.dispatchCommand to send '/tellraw ...' instead of directly sending message packets.");
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + sender.getName()+ " " + message);
-Logger.getGlobal().info(message);
         }    
     }
         
@@ -190,6 +189,7 @@ Logger.getGlobal().info(message);
             if(parentDir == null) {
                 parentDir = "";
             }
+            parentDir = parentDir.replace('\\', '/');
             list.add(new FancyMessage(MessageType.INFO_NO_PREFIX, this)
                     .addClickable(ChatColor.BLUE+".. parent directory", listCommand+" "+parentDir)
                     .setRunDirect());
@@ -317,22 +317,30 @@ Logger.getGlobal().info(message);
         }
         MyScanner scanner = new MyScanner(hoverMessage.substring(separator+1));
         while (scanner.hasCurrent()) {
-            String line = HIGHLIGHT_STRESSED+scanner.currentToken+" ";
-            scanner.next();
-            while(scanner.hasCurrent() && line.length()+scanner.currentToken.length()<LENGTH_OF_HOVER_LINE) {
-                if(scanner.currentToken.equals("\n")) {
-                    break;
+            String line = HIGHLIGHT_STRESSED+"";
+            boolean first = true;
+//Logger.getGlobal().info("new line");
+            while(scanner.hasCurrent() 
+                    && !scanner.currentToken.equals("\n") 
+                    && !scanner.currentToken.equals("\\n") 
+                    && line.length()+scanner.currentToken.length()<LENGTH_OF_HOVER_LINE) {
+                if(!first) {
+                    line = line.concat(" ");
                 } else {
-                    line = line.concat(scanner.currentToken+" ");
-                    scanner.next();
+                    first=false;
                 }
+                line = line.concat(scanner.currentToken);
+                scanner.next();
             }
             if(scanner.hasCurrent()) {
                 line = line.concat("\n");
-                if(scanner.currentToken.equals("\n")) {
+                if(scanner.currentToken.equals("\n") 
+                        || scanner.currentToken.equals("\\n")) {
+//Logger.getGlobal().info("\\n");
                     scanner.next();
                 }
             }
+//Logger.getGlobal().info("***"+line+"***");
             result = result.concat(line);
         }
         return result;

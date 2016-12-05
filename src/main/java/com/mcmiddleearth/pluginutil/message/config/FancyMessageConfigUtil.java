@@ -21,9 +21,7 @@ import com.mcmiddleearth.pluginutil.message.MessageType;
 import com.mcmiddleearth.pluginutil.message.MessageUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -45,8 +43,13 @@ public class FancyMessageConfigUtil {
     
     public static FancyMessage addFromConfig(FancyMessage message, ConfigurationSection config) 
                                                             throws MessageParseException {
-Logger.getGlobal().info("Start addFromConfig ****** "+ (config!=null));
+//Logger.getGlobal().info("Start addFromConfig ****** "+ (config!=null));
         List<String> lines = config.getStringList("message");
+        return addFromStringList(message, lines);
+    }
+    
+    public static FancyMessage addFromStringList(FancyMessage message, List<String> lines)  
+                                                            throws MessageParseException {
         if(lines == null) {
             return message;
         }
@@ -55,7 +58,7 @@ Logger.getGlobal().info("Start addFromConfig ****** "+ (config!=null));
             messageData = messageData.concat(cLine+" ");
         }
         String line = messageData;
-Logger.getGlobal().info("parse FancyMessage: "+line);
+//Logger.getGlobal().info("parse FancyMessage: "+line);
         List<MessageToken> tokenList = tokenise(line);
         Iterator<MessageToken> tokenIterator = tokenList.iterator();
         boolean inClickable = false;
@@ -64,12 +67,12 @@ Logger.getGlobal().info("parse FancyMessage: "+line);
         String toolTip = "";
         while(tokenIterator.hasNext()) {
             MessageToken currentToken = tokenIterator.next();
-Logger.getGlobal().info("CurrentToken: "+currentToken.getType().toString()+" - "+currentToken.getText());
+//Logger.getGlobal().info("CurrentToken: "+currentToken.getType().toString()+" - "+currentToken.getText());
             if(!inClickable && !inTooltipped) {
                 switch(currentToken.getType()) {
                     case TEXT:
                         message.addSimple(currentToken.getText());
-Logger.getGlobal().info("ADDSIMPLE - "+currentToken.getText());
+//Logger.getGlobal().info("ADDSIMPLE - "+currentToken.getText());
                         break;
                     case CLICK_START:
                         inClickable = true;
@@ -104,7 +107,7 @@ Logger.getGlobal().info("ADDSIMPLE - "+currentToken.getText());
                 switch(currentToken.getType()) {
                     case TEXT:
                         message.addClickable(currentToken.getText(),clickCommand);
-Logger.getGlobal().info("ADD CLICKABLE - **"+currentToken.getText()+"** **"+clickCommand);
+//Logger.getGlobal().info("ADD CLICKABLE - **"+currentToken.getText()+"** **"+clickCommand);
                         break;
                     case CLICK_END:
                         inClickable = false;
@@ -129,7 +132,7 @@ Logger.getGlobal().info("ADD CLICKABLE - **"+currentToken.getText()+"** **"+clic
                 switch(currentToken.getType()) {
                     case TEXT:
                         message.addTooltipped(currentToken.getText(), toolTip);
-Logger.getGlobal().info("ADD HOVER - **"+currentToken.getText()+"** **"+toolTip);
+//Logger.getGlobal().info("ADD HOVER - **"+currentToken.getText()+"** **"+toolTip);
                         break;
                     case HOVER_END:
                         inTooltipped = false;
@@ -154,7 +157,7 @@ Logger.getGlobal().info("ADD HOVER - **"+currentToken.getText()+"** **"+toolTip)
                 switch(currentToken.getType()) {
                     case TEXT:
                         message.addFancy(currentToken.getText(), clickCommand, toolTip);
-Logger.getGlobal().info("ADD FANCY - **"+currentToken.getText()+"** **"+clickCommand+"** **"+toolTip);
+//Logger.getGlobal().info("ADD FANCY - **"+currentToken.getText()+"** **"+clickCommand+"** **"+toolTip);
                         break;
                     case HOVER_END:
                         inTooltipped = false;
@@ -178,7 +181,7 @@ Logger.getGlobal().info("ADD FANCY - **"+currentToken.getText()+"** **"+clickCom
     
     private static List<MessageToken> tokenise(String line) {
         List<MessageToken> tokenList = new ArrayList<>();
-Logger.getGlobal().info("    TOKENIZE: "+line);
+//Logger.getGlobal().info("    TOKENIZE: "+line);
         while(line.length()>0) {
             int clStart = firstAppereance(line,clickStart);
             int hoStart = firstAppereance(line,hoverStart);
@@ -189,7 +192,7 @@ Logger.getGlobal().info("    TOKENIZE: "+line);
             if(firstPosition > 0) {
                 tokenList.add(new MessageToken(line.substring(0,Math.min(firstPosition,line.length()))));
                 line = line.substring(Math.min(firstPosition,line.length()));
-Logger.getGlobal().info("    ADDEDTEXT: "+tokenList.get(tokenList.size()-1).getText());
+//Logger.getGlobal().info("    ADDEDTEXT: "+tokenList.get(tokenList.size()-1).getText());
             } else {
                 if(clStart == 0) {
                     tokenList.add(new MessageToken(MessageTokenType.CLICK_START));
@@ -197,22 +200,22 @@ Logger.getGlobal().info("    ADDEDTEXT: "+tokenList.get(tokenList.size()-1).getT
                     int endPosition = Math.min(firstAppereance(line,endOfStartTag),line.length());
                     tokenList.add(new MessageToken(line.substring(0,endPosition)));
                     line = line.substring(endPosition+2);
-Logger.getGlobal().info("   ADDED CLICK START");
+//Logger.getGlobal().info("   ADDED CLICK START");
                 } else if(clEnd == 0) {
                     tokenList.add(new MessageToken(MessageTokenType.CLICK_END));
                     line = line.substring(8);
-Logger.getGlobal().info("   ADDED CLICK END");
+//Logger.getGlobal().info("   ADDED CLICK END");
                 } else if(hoStart == 0) {
                     tokenList.add(new MessageToken(MessageTokenType.HOVER_START));
                     line = line.substring(8);
                     int endPosition = Math.min(firstAppereance(line,endOfStartTag),line.length());
                     tokenList.add(new MessageToken(line.substring(0,endPosition)));
                     line = line.substring(endPosition+2);
-Logger.getGlobal().info("   ADDED HOVER START");
+//Logger.getGlobal().info("   ADDED HOVER START");
                 } else {
                     tokenList.add(new MessageToken(MessageTokenType.HOVER_END));
                     line = line.substring(8);
-Logger.getGlobal().info("   ADDED HOVER END");
+//Logger.getGlobal().info("   ADDED HOVER END");
                 }
             }
         }

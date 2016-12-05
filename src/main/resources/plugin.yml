@@ -6,5 +6,11 @@ load: STARTUP
 softdepend: [ProtocolLib,Essentials]
 
 commands:
+    dev:
+        description: manage debub output
+        usage: /dev [true | false | r]
     
 permission:
+    pluginutil.developer:
+        description: Gives access to all plotbuild commands
+        default: op

@@ -12,7 +12,7 @@
     </properties>
     <build>
     <!-- <sourceDirectory>${project.build.directory}/generated-sources/delombok</sourceDirectory> -->
-     
+       
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -55,6 +55,20 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>dynmap-repo</id>
+            <url>http://repo.mikeprimm.com/</url>
+        </repository>
+          <repository>
+            <id>sk89q-snapshots</id>
+            <url>http://maven.sk89q.com/artifactory/repo</url>
+            <releases>
+              <enabled>true</enabled> <!-- releases enabled: this specific repository also hosts release versions -->
+            </releases>
+            <snapshots>
+              <enabled>true</enabled> <!-- snapshots enabled: we declare a SNAPSHOT repository because we need to download a SNAPSHOT dependency -->
+            </snapshots>
+          </repository>
     </repositories>
     <dependencies>
         <!--Spigot API-->
@@ -62,7 +76,7 @@
         <dependency>
                 <groupId>org.bukkit</groupId>
                 <artifactId>bukkit</artifactId>
-                <version>1.9.2-R0.1-SNAPSHOT</version>
+                <version>1.10.2-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
         </dependency>
         <dependency>
@@ -74,7 +88,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <version>1.10.2-R0.1-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -82,6 +96,16 @@
             <artifactId>lombok</artifactId>
             <version>1.16.6</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>com.sk89q.worldedit</groupId>
+          <artifactId>worldedit-bukkit</artifactId>
+          <version>6.1.4-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>us.dynmap</groupId>
+            <artifactId>dynmap-api</artifactId>
+            <version>2.4-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

@@ -9,7 +9,6 @@ import static com.mcmiddleearth.pluginutil.message.MessageUtil.sendRawMessage;
 import com.mcmiddleearth.pluginutil.message.config.FancyMessageConfigUtil;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -114,12 +113,6 @@ public final class FancyMessage {
                 rawText = rawText.concat(",");
             }
             rawText = rawText.concat("{\"text\":\""+message+"\",\"color\":\""+baseColorString()+"\"");
-            //boolean clickEvent = false;
-/*Logger.getGlobal().info("*"+command+"###"+hoverText+"*");
-            if(command !=null && command.equals("open_url") && hoverText!=null) {
-                rawText = rawText.concat(",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"");
-                rawText = rawText.concat(hoverText+"\"}");
-            } else {*/
             if(command!=null) {
                 String thisAction = action;
                 if(command.startsWith("http")) {
@@ -143,7 +136,6 @@ public final class FancyMessage {
             rawText = rawText.concat("}");
         }
         rawText = rawText.concat("]");
-Logger.getGlobal().info("SEND RAW **************\n"+rawText);
         sendRawMessage(recipient, rawText);
         return this;
     }

@@ -16,6 +16,7 @@
  */
 package com.mcmiddleearth.pluginutil;
 
+import java.util.logging.Logger;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -29,6 +30,9 @@ public class EventUtil {
     private static boolean hasOffHand = true;
     
     public static boolean isMainHandEvent(PlayerInteractEvent event) {
+        if(event.getHand()==null) {
+            return false;
+        }
         try {
             return !hasOffHand || event.getHand().equals(EquipmentSlot.HAND);
         } catch(NoSuchMethodError e) {
@@ -38,6 +42,9 @@ public class EventUtil {
     }
     
     public static boolean isMainHandEvent(PlayerInteractEntityEvent event) {
+        if(event.getHand()==null) {
+            return false;
+        }
         try {
             return !hasOffHand || event.getHand().equals(EquipmentSlot.HAND);
         } catch(NoSuchMethodError e) {
