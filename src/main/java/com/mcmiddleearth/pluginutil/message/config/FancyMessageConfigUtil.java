@@ -22,6 +22,7 @@ import com.mcmiddleearth.pluginutil.message.MessageUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -189,7 +190,9 @@ public class FancyMessageConfigUtil {
             int hoEnd = firstAppereance(line,hoverEnd);
             int firstPosition = Math.min(Math.min(clStart, hoStart),
                                          Math.min(clEnd, hoEnd));
+//Logger.getGlobal().info("    TOKENIZEa: "+line);
             if(firstPosition > 0) {
+//Logger.getGlobal().info("    TOKENIZEb: "+line);
                 tokenList.add(new MessageToken(line.substring(0,Math.min(firstPosition,line.length()))));
                 line = line.substring(Math.min(firstPosition,line.length()));
 //Logger.getGlobal().info("    ADDEDTEXT: "+tokenList.get(tokenList.size()-1).getText());
@@ -198,8 +201,13 @@ public class FancyMessageConfigUtil {
                     tokenList.add(new MessageToken(MessageTokenType.CLICK_START));
                     line = line.substring(8);
                     int endPosition = Math.min(firstAppereance(line,endOfStartTag),line.length());
-                    tokenList.add(new MessageToken(line.substring(0,endPosition)));
-                    line = line.substring(endPosition+2);
+//Logger.getGlobal().info("    TOKENIZEc: "+line+"***"+line.length()+" "+endPosition);
+                    tokenList.add(new MessageToken(removeColorCodes(line.substring(0,endPosition))));
+                    if(line.length()>endPosition+2) {
+                        line = line.substring(endPosition+2);
+                    } else {
+                        line = "";
+                    }
 //Logger.getGlobal().info("   ADDED CLICK START");
                 } else if(clEnd == 0) {
                     tokenList.add(new MessageToken(MessageTokenType.CLICK_END));
@@ -210,7 +218,11 @@ public class FancyMessageConfigUtil {
                     line = line.substring(8);
                     int endPosition = Math.min(firstAppereance(line,endOfStartTag),line.length());
                     tokenList.add(new MessageToken(line.substring(0,endPosition)));
-                    line = line.substring(endPosition+2);
+                    if(line.length()>endPosition+2) {
+                        line = line.substring(endPosition+2);
+                    } else {
+                        line = "";
+                    }
 //Logger.getGlobal().info("   ADDED HOVER START");
                 } else {
                     tokenList.add(new MessageToken(MessageTokenType.HOVER_END));
@@ -225,6 +237,19 @@ public class FancyMessageConfigUtil {
     private static int firstAppereance(String line, String search) {
         int index = line.indexOf(search);
         return (index==-1?Integer.MAX_VALUE:index);
+    }
+    
+    private static String removeColorCodes(String str) {
+        int pos = str.indexOf("§");
+        while(pos>=0) {
+            String newStr = str.substring(0, pos);
+            if(str.length()>pos+2) {
+                newStr = newStr.concat(str.substring(pos+2,str.length()));
+            }
+            str = newStr;
+            pos = str.indexOf("§");
+        }
+        return str;
     }
     
     public static void store(List<String[]> data, ConfigurationSection config) {
