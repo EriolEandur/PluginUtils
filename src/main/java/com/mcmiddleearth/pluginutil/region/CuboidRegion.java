@@ -104,4 +104,9 @@ public class CuboidRegion extends Region{
                                                     config.getInt("maxCornerY",0),
                                                     config.getInt("maxCornerZ",0)));
     }
+    
+    @Override
+    public String toString() {
+        return super.toString()+" Corners: "+minCorner.toString()+"; "+maxCorner.toString();
+    }
 }
