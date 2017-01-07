@@ -220,4 +220,13 @@ public class PrismoidRegion extends Region{
         int maxY = config.getInt("maxY");
         return new PrismoidRegion(location, xPoints, zPoints, minY, maxY);
     }
+    
+    @Override
+    public String toString() {
+        String result = super.toString()+" Height-level: "+minY+" - "+maxY+ " Points: ";
+        for(int i=0;i<xPoints.size();i++) {
+            result = result + "("+xPoints.get(i)+"/"+zPoints.get(i)+") ";
+        }
+        return result;
+    }
 }

@@ -42,6 +42,24 @@ public class NumericUtil {
         }
     }
 
+    public static long getLong(String str) {
+        try {
+            return Long.parseLong(str);
+        }
+        catch(NumberFormatException e) {
+            return -1;
+        }
+    }
+    
+    public static boolean isLong(String s) {
+        try {
+            Long.parseLong(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     public static int getRandom(int lower, int upper) {
         Random random = new Random();
         return random.nextInt((upper - lower) + 1) + lower;

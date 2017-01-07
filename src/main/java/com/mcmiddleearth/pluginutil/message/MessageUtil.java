@@ -232,6 +232,9 @@ public class MessageUtil {
         if(page>maxPage) {
             page = maxPage;
         }
+        if(page<1) {
+            page = 1;
+        }
         header.addSimple(" [page " +page+"/"+maxPage+"]").
                send(recipient);
         if(page>1) {

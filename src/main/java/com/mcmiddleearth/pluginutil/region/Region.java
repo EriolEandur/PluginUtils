@@ -65,4 +65,9 @@ public abstract class Region{
         return location.getWorld();
     }
     
+    @Override
+    public String toString() {
+        return "Location: "+location.toString();
+    }
+    
 }

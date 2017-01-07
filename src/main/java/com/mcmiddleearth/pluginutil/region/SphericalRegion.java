@@ -62,4 +62,10 @@ public class SphericalRegion extends Region{
         Location location = Region.loadLocation(config);
         return new SphericalRegion(location, config.getInt("radius"));
     }
+    
+    @Override
+    public String toString() {
+        return super.toString()+" Radius: "+radius;
+    }
+
 }
