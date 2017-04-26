@@ -26,7 +26,7 @@ public class NumericUtil {
     
     public static int getInt(String str) {
         try {
-            return Integer.parseInt(str);
+            return Integer.parseInt(str.trim());
         }
         catch(NumberFormatException e) {
             return -1;
@@ -35,7 +35,25 @@ public class NumericUtil {
     
     public static boolean isInt(String s) {
         try {
-            Integer.parseInt(s);
+            Integer.parseInt(s.trim());
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public static int getShort(String str) {
+        try {
+            return Short.parseShort(str.trim());
+        }
+        catch(NumberFormatException e) {
+            return -1;
+        }
+    }
+    
+    public static boolean isShort(String s) {
+        try {
+            Short.parseShort(s.trim());
             return true;
         } catch (NumberFormatException e) {
             return false;
@@ -44,7 +62,7 @@ public class NumericUtil {
 
     public static long getLong(String str) {
         try {
-            return Long.parseLong(str);
+            return Long.parseLong(str.trim());
         }
         catch(NumberFormatException e) {
             return -1;
@@ -53,7 +71,7 @@ public class NumericUtil {
     
     public static boolean isLong(String s) {
         try {
-            Long.parseLong(s);
+            Long.parseLong(s.trim());
             return true;
         } catch (NumberFormatException e) {
             return false;

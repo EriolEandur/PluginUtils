@@ -6,6 +6,7 @@
 package com.mcmiddleearth.pluginutil;
 
 import com.mcmiddleearth.pluginutil.developer.DevCommand;
+import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -15,8 +16,12 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class PluginUtilsPlugin extends JavaPlugin {
         
+    @Getter
+    private static JavaPlugin instance;
     
+    @Override
     public void onEnable() {
         getCommand("dev").setExecutor(new DevCommand());
+        instance = this;
     }
 }

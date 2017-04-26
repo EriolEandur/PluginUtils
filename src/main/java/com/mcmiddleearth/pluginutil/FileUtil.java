@@ -18,6 +18,10 @@ package com.mcmiddleearth.pluginutil;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  *
@@ -69,4 +73,23 @@ public class FileUtil {
         return file.getPath().replace(directory.getPath(), "").substring(1);
     }
 
+    public static List<File> getFilesRecursive(File file, FileFilter filter) {
+        List<File> files = new ArrayList<>();
+        List<File> newF =Arrays.asList(file.listFiles(filter));
+        if(newF.size()>0) {
+Logger.getGlobal().info("new "+newF.get(0));
+        files.addAll(newF);
+        }
+        List<File> subDirs = Arrays.asList(file.listFiles(getDirFilter()));
+        for(File subDir: subDirs) {
+            List<File> newFiles = getFilesRecursive(subDir,filter);
+            if(newFiles!=null) {
+                if(newFiles.size()>0) {
+Logger.getGlobal().info("newFiles "+newFiles.get(0));
+                files.addAll(newFiles);
+                }
+            }
+        }
+        return files;
+    }
 }
