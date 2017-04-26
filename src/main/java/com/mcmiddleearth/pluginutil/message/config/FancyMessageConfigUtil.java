@@ -22,7 +22,6 @@ import com.mcmiddleearth.pluginutil.message.MessageUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 

@@ -19,6 +19,7 @@ package com.mcmiddleearth.pluginutil.message;
 import com.mcmiddleearth.pluginutil.FileUtil;
 import com.mcmiddleearth.pluginutil.NMSUtil;
 import com.mcmiddleearth.pluginutil.NumericUtil;
+import com.mcmiddleearth.pluginutil.PluginUtilsPlugin;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
@@ -32,7 +33,9 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -267,6 +270,11 @@ public class MessageUtil {
                 JSONObject jInput = (JSONObject) new JSONParser().parse(input);
                 return (String) jInput.get("description");
             } catch (FileNotFoundException | ParseException ex) {}
+        } else if(file.getName().endsWith("yml")) {
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+            if(config!=null) {
+                return config.getString("description","");
+            }
         }
         return "";
     }
@@ -347,6 +355,24 @@ public class MessageUtil {
             result = result.concat(line);
         }
         return result;
+    }
+    
+    public void scheduleErrorMessage(final CommandSender cs, final String message) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                sendErrorMessage(cs, message);
+            }
+        }.runTask(PluginUtilsPlugin.getInstance());
+    }
+    
+    public void scheduleInfoMessage(final CommandSender cs, final String message) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                sendInfoMessage(cs, message);
+            }
+        }.runTask(PluginUtilsPlugin.getInstance());
     }
     
 
