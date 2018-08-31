@@ -5,7 +5,6 @@
  */
 package com.mcmiddleearth.pluginutil.message;
 
-import static com.mcmiddleearth.pluginutil.message.MessageUtil.sendRawMessage;
 import com.mcmiddleearth.pluginutil.message.config.FancyMessageConfigUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 /**
- *
+ * This class provides an easy to use way to send clickable and tooltipped text chat messages to players.
+ * When a player hovers with mouse cursor over a tooltipped message he will see the tooltip text.
+ * When he clicks at a clickable message he will get the associated text in chat.
  * @author Eriol_Eandur
  */
 public final class FancyMessage {
@@ -30,10 +31,20 @@ public final class FancyMessage {
     @Getter
     private MessageUtil messageUtil;
 
+    /**
+     * Create a new fancy info message.
+     * @param messageUtil MessageUtil object to handle sending of the message.
+     */
     public FancyMessage(MessageUtil messageUtil) {
         this(MessageType.INFO, messageUtil);
     }
     
+    /**
+     * Create a new fancy message of any type.
+     *
+     * @param messageType Type of the message (default color and prefix)
+     * @param messageUtil MessageUtil object to handle sending of the message.
+     */
     public FancyMessage(MessageType messageType, MessageUtil messageUtil) {
         baseColor = messageType.getBaseColor();
         this.messageUtil = messageUtil;
@@ -52,42 +63,87 @@ public final class FancyMessage {
         addSimple(prefix);
     }
     
+    /**
+     * Create a new fancy message of any type and base color.
+     *
+     * @param messageType Type of the message (default color and prefix)
+     * @param messageUtil MessageUtil object to handle sending of the message.
+     * @param baseColor Defaut color to use.
+     */
     public FancyMessage(MessageType messageType, MessageUtil messageUtil, ChatColor baseColor) {
         this(messageType, messageUtil);
         this.baseColor = baseColor;
     }
 
-    
+    /**
+     * Append a simple text to the message which is not tooltipped and not clickable.
+     * @param text Text to append to the message
+     * @return Message with new text appended
+     */
     public FancyMessage addSimple(String text){
         data.add(new String[]{text,null,null});
         return this;
     }
 
+    /**
+     * Append a clickable text to the message.
+     * @param text Text to append to the message
+     * @param onClickCommand Text to put into player chat when he clicks the text
+     * @return Message with new text appended
+     */
     public FancyMessage addClickable(String text, String onClickCommand) {
         data.add(new String[]{text,onClickCommand,null});
         return this;
     }
 
+    /**
+     * Append a clickable text to the message.
+     * @param text Text to append to the message
+     * @param onHoverText Text to disply when a player hovers the mouse cursor over the text
+     * @return Message with new text appended
+     */
     public FancyMessage addTooltipped(String text, String onHoverText) {
         data.add(new String[]{text,null,onHoverText});
         return this;
     }
 
+    /**
+     * Append a clickable and tooltipped text to the message.
+     * @param text Text to append to the message
+     * @param onClickCommand Text to put into player chat when he clicks the text
+     * @param onHoverText Text to disply when a player hovers the mouse cursor over the text
+     * @return Message with new text appended
+     */
     public FancyMessage addFancy(String text, String onClickCommand, String onHoverText) {
         data.add(new String[]{text,onClickCommand,onHoverText});
         return this;
     }
     
+    /**
+     * Defines a new default color which will be used for each new line.
+     * @param color new default color
+     * @return same message
+     */
     public FancyMessage setBaseColor(ChatColor color) {
         baseColor = color;
         return this;
     }
     
+    /**
+     * Clicking at the message will excecute the associated text as a command instead of
+     * puting it in text chat.
+     * @return same message
+     */
     public FancyMessage setRunDirect() {
         this.runDirect = true;
         return this;
     }
 
+    /**
+     * Send a fancy message to a player.
+     * @param recipient Player who will get the message.
+     * @return same message
+     */
     public FancyMessage send(Player recipient) {
         String rawText = "[";
         String action;
@@ -136,10 +192,14 @@ public final class FancyMessage {
             rawText = rawText.concat("}");
         }
         rawText = rawText.concat("]");
-        sendRawMessage(recipient, rawText);
+        MessageUtil.sendRawMessage(recipient, rawText);
         return this;
     }
     
+    /**
+     * Store the fancy message in a configuration.
+     * @param config where to store the message
+     */
     public void saveToConfig(ConfigurationSection config) {
         FancyMessageConfigUtil.store(data, config);
     }

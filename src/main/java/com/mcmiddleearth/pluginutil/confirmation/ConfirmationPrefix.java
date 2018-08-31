@@ -17,12 +17,11 @@
 package com.mcmiddleearth.pluginutil.confirmation;
 
 import com.mcmiddleearth.pluginutil.message.MessageUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationPrefix;
 
 /**
- *
+ * Conversation prefix will use highlight prefix of the connected MessageUtil.
  * @author Eriol_Eandur
  */
 class ConfirmationPrefix implements ConversationPrefix {

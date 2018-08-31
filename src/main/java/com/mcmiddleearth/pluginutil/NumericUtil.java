@@ -19,7 +19,7 @@ package com.mcmiddleearth.pluginutil;
 import java.util.Random;
 
 /**
- *
+ * Numbers utility class
  * @author Eriol_Eandur
  */
 public class NumericUtil {

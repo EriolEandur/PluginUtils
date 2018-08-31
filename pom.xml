@@ -42,7 +42,7 @@
             <id>dynmap-repo</id>
             <url>http://repo.mikeprimm.com/</url>
         </repository>
-          <repository>
+        <repository>
             <id>sk89q-snapshots</id>
             <url>http://maven.sk89q.com/artifactory/repo</url>
             <releases>
@@ -59,7 +59,7 @@
         <dependency>
                 <groupId>org.bukkit</groupId>
                 <artifactId>bukkit</artifactId>
-                <version>1.10.2-R0.1-SNAPSHOT</version>
+                <version>1.12.2-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
         </dependency>
         <dependency>
@@ -71,8 +71,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.10.2-R0.1-SNAPSHOT</version>
-            <type>jar</type>
+            <version>1.12.2-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -84,6 +83,16 @@
           <groupId>com.sk89q.worldedit</groupId>
           <artifactId>worldedit-bukkit</artifactId>
           <version>6.1.4-SNAPSHOT</version>
+          <exclusions>
+            <exclusion>
+              <groupId>org.bukkit</groupId>
+              <artifactId>bukkit</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.spigot</groupId>
+              <artifactId>spigot</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
         <dependency>
             <groupId>us.dynmap</groupId>

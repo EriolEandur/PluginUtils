@@ -41,7 +41,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
- *
+ * Utility class to handle sending of fancy messages.
  * @author Ivanpl, Eriol_Eandur
  */
 

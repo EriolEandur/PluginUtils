@@ -20,7 +20,7 @@ import lombok.Getter;
 import org.bukkit.ChatColor;
 
 /**
- *
+ * Konstants for fancy message types which will determine defaut color and prefix of the message.
  * @author Eriol_Eandur
  */
 public enum MessageType {

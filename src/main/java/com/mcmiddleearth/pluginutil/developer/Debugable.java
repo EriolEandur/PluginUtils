@@ -17,7 +17,7 @@
 package com.mcmiddleearth.pluginutil.developer;
 
 /**
- *
+ * Interface for plugins making use of the developer output handled by DevCommand
  * @author Eriol_Eandur
  */
 public interface Debugable {
