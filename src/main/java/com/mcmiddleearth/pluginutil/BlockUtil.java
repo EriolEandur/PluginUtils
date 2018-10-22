@@ -141,12 +141,12 @@ public class BlockUtil {
             Map<String,Object> blockData= new HashMap<>();
             blockData.put("basic", getBlockData(block));
             switch(block.getType()) {
-                case WALL_SIGN:
-                case SIGN_POST:
+                case LEGACY_WALL_SIGN:
+                case LEGACY_SIGN_POST:
                     blockData.put("lines", ((Sign)block.getState()).getLines());
                     break;
-                case STANDING_BANNER:
-                case WALL_BANNER:
+                case LEGACY_STANDING_BANNER:
+                case LEGACY_WALL_BANNER:
                     blockData.put("color", ((Banner)block.getState()).getBaseColor().name());
                     List<Map<String,Object>> patternList = new ArrayList<>();
                     for(Pattern pattern : ((Banner)block.getState()).getPatterns()) {
@@ -154,7 +154,7 @@ public class BlockUtil {
                     }
                     blockData.put("pattern", patternList);
                     break;
-                case SKULL:
+                case LEGACY_SKULL:
                     blockData.put("type", ((Skull)block.getState()).getSkullType().name());
                     blockData.put("rotation", ((Skull)block.getState()).getRotation().name());
                     blockData.put("owner", ((Skull)block.getState()).getOwner());
@@ -182,15 +182,15 @@ public class BlockUtil {
                     state.update(true, false);
                     state = state.getBlock().getState();
                     switch(state.getType()) {
-                    case WALL_SIGN:
-                    case SIGN_POST:
+                    case LEGACY_WALL_SIGN:
+                    case LEGACY_SIGN_POST:
                         for(int i= 0; i<4;i++) {
                             String[] lines = ((List<String>) data.get("lines")).toArray(new String[0]);
                             ((Sign) state).setLine(i, lines[i]);
                         }
                         break;
-                    case STANDING_BANNER:
-                    case WALL_BANNER:
+                    case LEGACY_STANDING_BANNER:
+                    case LEGACY_WALL_BANNER:
                         DyeColor color = DyeColor.valueOf((String) data.get("color"));
                         ((Banner) state).setBaseColor(color);
                         List<Map<String,Object>> patternList = (List<Map<String,Object>>) data.get("pattern");
@@ -199,7 +199,7 @@ public class BlockUtil {
                             ((Banner) state).addPattern(new Pattern(patternData));
                         }
                         break;
-                    case SKULL:
+                    case LEGACY_SKULL:
                         ((Skull) state).setSkullType(SkullType.valueOf((String) data.get("type")));
                         if(((Skull)state).getSkullType().equals(SkullType.PLAYER)) {
                             deserializeHead(state.getBlock(), (ItemStack)data.get("headItem"));
@@ -221,7 +221,7 @@ public class BlockUtil {
     private static BlockState getBaseBlockState(World world, Object rawData) {
                 List<Integer> data = (List<Integer>) rawData;
                 BlockState state = world.getBlockAt(data.get(0), data.get(1), data.get(2)).getState();
-                state.setType(Material.getMaterial(data.get(3)));
+                state.setType(LegacyMaterialUtil.getMaterial(data.get(3)));
                 state.setRawData(data.get(4).byteValue());
                 return state;
     }
@@ -231,18 +231,18 @@ public class BlockUtil {
         data[0] = block.getLocation().getBlockX();
         data[1] = block.getLocation().getBlockY();
         data[2] = block.getLocation().getBlockZ();
-        data[3] = block.getTypeId();
+        data[3] = block.getType().getId();
         data[4] = block.getData();
         return data;
     }
 
     private static boolean isSimple(Block block) {
         switch(block.getType()) {
-                case WALL_SIGN:
-                case SIGN_POST:
-                case STANDING_BANNER:
-                case WALL_BANNER:
-                case SKULL:
+                case LEGACY_WALL_SIGN:
+                case LEGACY_SIGN_POST:
+                case LEGACY_STANDING_BANNER:
+                case LEGACY_WALL_BANNER:
+                case LEGACY_SKULL:
                     return false;
                 default:
                     return true;
@@ -252,50 +252,50 @@ public class BlockUtil {
     public static boolean isTransparent(Location loc) {
         Material mat = loc.getBlock().getType();
         switch(mat) {
-            case AIR:
-            case GLASS:
-            case LONG_GRASS:
-            case STRING:
-            case FLOWER_POT:
-            case WALL_SIGN:
-            case SIGN_POST:
-            case LEAVES:
-            case STAINED_GLASS:
-            case WEB:
-            case DEAD_BUSH:
-            case TORCH:
-            case REDSTONE_TORCH_ON:
-            case REDSTONE_TORCH_OFF:
-            case LEVER:
-            case WOOD_BUTTON:
-            case STONE_BUTTON:
-            case TRAP_DOOR:
-            case WOOD_DOOR:
-            case IRON_DOOR:
-            case WOOD_PLATE:
-            case STONE_PLATE:
-            case IRON_PLATE:
-            case GOLD_PLATE:
-            case THIN_GLASS:
-            case VINE:
-            case IRON_FENCE:
-            case FENCE:
-            case SAPLING:
-            case ANVIL:
-            case ENCHANTMENT_TABLE:
-            case DOUBLE_PLANT:
-            case SNOW:
-            case CARPET:
-            case STAINED_GLASS_PANE:
-            case BED_BLOCK:
-            case SKULL:
-            case LADDER:
-            case RAILS:
-            case POWERED_RAIL:
-            case ACTIVATOR_RAIL:
-            case DETECTOR_RAIL:
-            case STANDING_BANNER:
-            case WALL_BANNER:
+            case LEGACY_AIR:
+            case LEGACY_GLASS:
+            case LEGACY_LONG_GRASS:
+            case LEGACY_STRING:
+            case LEGACY_FLOWER_POT:
+            case LEGACY_WALL_SIGN:
+            case LEGACY_SIGN_POST:
+            case LEGACY_LEAVES:
+            case LEGACY_STAINED_GLASS:
+            case LEGACY_WEB:
+            case LEGACY_DEAD_BUSH:
+            case LEGACY_TORCH:
+            case LEGACY_REDSTONE_TORCH_ON:
+            case LEGACY_REDSTONE_TORCH_OFF:
+            case LEGACY_LEVER:
+            case LEGACY_WOOD_BUTTON:
+            case LEGACY_STONE_BUTTON:
+            case LEGACY_TRAP_DOOR:
+            case LEGACY_WOOD_DOOR:
+            case LEGACY_IRON_DOOR:
+            case LEGACY_WOOD_PLATE:
+            case LEGACY_STONE_PLATE:
+            case LEGACY_IRON_PLATE:
+            case LEGACY_GOLD_PLATE:
+            case LEGACY_THIN_GLASS:
+            case LEGACY_VINE:
+            case LEGACY_IRON_FENCE:
+            case LEGACY_FENCE:
+            case LEGACY_SAPLING:
+            case LEGACY_ANVIL:
+            case LEGACY_ENCHANTMENT_TABLE:
+            case LEGACY_DOUBLE_PLANT:
+            case LEGACY_SNOW:
+            case LEGACY_CARPET:
+            case LEGACY_STAINED_GLASS_PANE:
+            case LEGACY_BED_BLOCK:
+            case LEGACY_SKULL:
+            case LEGACY_LADDER:
+            case LEGACY_RAILS:
+            case LEGACY_POWERED_RAIL:
+            case LEGACY_ACTIVATOR_RAIL:
+            case LEGACY_DETECTOR_RAIL:
+            case LEGACY_STANDING_BANNER:
+            case LEGACY_WALL_BANNER:
                 return true;
             default: 
                 return false;
@@ -305,7 +305,7 @@ public class BlockUtil {
     private static void deserializeHead(Block block, ItemStack head) {
         try {
             BlockState blockState = block.getState();
-            blockState.setType(Material.SKULL);
+            blockState.setType(Material.LEGACY_SKULL);
             blockState.update(true, false);
             blockState = block.getState();
             Skull skullData = (Skull) blockState;
@@ -332,7 +332,7 @@ public class BlockUtil {
             profileField.setAccessible(true);
             GameProfile profile = (GameProfile) profileField.get(skullBlockState);
 
-            ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+            ItemStack head = new ItemStack(Material.LEGACY_SKULL_ITEM, 1, (short) 3);
             ItemMeta headMeta = head.getItemMeta();
             
             profileField = headMeta.getClass().getDeclaredField("profile");
