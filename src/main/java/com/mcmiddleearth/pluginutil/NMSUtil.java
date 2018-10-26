@@ -18,10 +18,11 @@ package com.mcmiddleearth.pluginutil;
 
 import java.lang.reflect.InvocationTargetException;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 /**
- *
+ * Utiliy class for NMS methods to a PlayerConnection using reflection
  * @author Eriol_Eandur
  */
 public class NMSUtil {
@@ -37,4 +38,12 @@ public class NMSUtil {
         playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, packet);
     }
 
+    public static Object getTileEntity(Block block) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, InstantiationException {
+        Object nmsWorld = block.getWorld().getClass().getMethod("getHandle")
+                                                          .invoke(block.getWorld());
+        Object blockPosition = NMSUtil.getNMSClass("BlockPosition").getConstructor(int.class,int.class,int.class)
+                                      .newInstance(block.getX(),block.getY(),block.getZ());
+        return nmsWorld.getClass().getMethod("getTileEntity", blockPosition.getClass())
+                                  .invoke(nmsWorld, blockPosition);
+    }
 }

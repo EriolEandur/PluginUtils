@@ -26,7 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /**
- *
+ * Creates conversation to confirm or cancel a task in text chat.
  * @author Eriol_Eandur
  */
 public class ConfirmationFactory implements ConversationAbandonedListener{
@@ -35,6 +35,11 @@ public class ConfirmationFactory implements ConversationAbandonedListener{
     
     private final MessageUtil messageUtil;
     
+    /**
+     * Creates a new Confirmation Factory
+     * @param plugin Associated plugin
+     * @param messageUtil MessageUtil to use
+     */
     public ConfirmationFactory(Plugin plugin, MessageUtil messageUtil){
         this. messageUtil = messageUtil;
         factory = new ConversationFactory(plugin)
@@ -45,6 +50,13 @@ public class ConfirmationFactory implements ConversationAbandonedListener{
                 .addConversationAbandonedListener(this);
     }
     
+    /**
+     * Start a confirmation conversation
+     * @param player to whom the conversation is displayed
+     * @param query text of the query to be displayed
+     * @param task Confimationable to be executed depending on player answer
+     * @param data data for free use by the Confirmationable
+     */
     public void start(Player player, String query, Confirmationable task, Object[] data) {
         Conversation conversation = factory.buildConversation(player);
         ConversationContext context = conversation.getContext();

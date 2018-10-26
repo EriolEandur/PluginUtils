@@ -5,7 +5,6 @@
  */
 package com.mcmiddleearth.pluginutil.developer;
 
-import com.mcmiddleearth.pluginutil.developer.DevUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -15,11 +14,24 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /**
- *
+ * Command to manage developer output to players or console
  * @author Eriol_Eandur
  */
 public class DevCommand implements CommandExecutor{
     
+    /**
+     * Players need permission "pluginutil.developer" to use this command.
+     * Arguments array args must contain:
+     *    - [0] Name of the plugin to be debugged
+     *    - [1] true/false to switch console output or full number to set debug level
+     *          without this argument output will be sent to the player issuing the command
+     *          with "r" for this argument the player issuing will no longer recieve debug output
+     * @param cs
+     * @param arg1
+     * @param arg2
+     * @param args
+     * @return 
+     */
     @Override
     public boolean onCommand(CommandSender cs, Command arg1, String arg2, String[] args) {
         if (cs instanceof Player && !((Player)cs).hasPermission("pluginutil.developer"))

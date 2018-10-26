@@ -21,7 +21,7 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 
 /**
- *
+ * Boolean prompt to display a query defined in convesation context.
  * @author Eriol_Eandur
  */
 public class ConfirmationPrompt extends BooleanPrompt{

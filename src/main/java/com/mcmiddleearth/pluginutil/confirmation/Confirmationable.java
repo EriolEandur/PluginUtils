@@ -19,13 +19,24 @@ package com.mcmiddleearth.pluginutil.confirmation;
 import org.bukkit.entity.Player;
 
 /**
- *
+ * Interface for tasks that will be executed depending on the answer of a 
+ * player in a confirmation conversation.
  * @author Eriol_Eandur
  */
 public interface Confirmationable {
     
+    /**
+     * Executed if the player answers true or yes in the conersation.
+     * @param player to whom the conversation is displayed
+     * @param data data objects for free use of the executed task
+     */
     public void confirmed(Player player, Object[] data);
     
+    /**
+     * Executed if the player answers false or no in the conersation.
+     * @param player to whom the conversation is displayed
+     * @param data data objects for free use of the executed task
+     */
     public void cancelled(Player player, Object[] data);
     
 }

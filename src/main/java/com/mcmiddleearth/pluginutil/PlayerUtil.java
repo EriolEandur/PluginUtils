@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
+ * Player utility class. Lots of uuid checks.
  * @author Eriol_Eandur
  */
 public class PlayerUtil {

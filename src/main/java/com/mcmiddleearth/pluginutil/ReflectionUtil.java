@@ -40,6 +40,16 @@ public class ReflectionUtil {
     
     public static void showMethods(Object object) {
         Logger.getGlobal().info("***************************************************");
+        Method[] methods = object.getClass().getMethods();
+        Logger.getGlobal().info("Methods for "+object.getClass().toString()+":");
+        for(Method method: methods) {
+            Logger.getGlobal().info(method.toString());
+        }
+        Logger.getGlobal().info("***************************************************");
+    }
+    
+    public static void showDeclaredMethods(Object object) {
+        Logger.getGlobal().info("***************************************************");
         Method[] methods = object.getClass().getDeclaredMethods();
         Logger.getGlobal().info("Methods for "+object.getClass().toString()+":");
         for(Method method: methods) {
