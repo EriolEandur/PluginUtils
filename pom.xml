@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mcmiddleearth</groupId>
     <artifactId>PluginUtils</artifactId>
-    <version>1.2-SNAPSHOT-native-001</version>
+    <version>1.2-SNAPSHOT-native-002</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -44,6 +44,10 @@
             <url>http://repo.mikeprimm.com/</url>
         </repository>
         <repository>
+            <id>fawe-repo</id>
+            <url>http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/</url>
+        </repository>
+        <repository>
             <id>sk89q-snapshots</id>
             <url>http://maven.sk89q.com/artifactory/repo</url>
             <releases>
@@ -60,7 +64,7 @@
         <dependency>
                 <groupId>org.bukkit</groupId>
                 <artifactId>bukkit</artifactId>
-                <version>1.13.1-R0.1-SNAPSHOT</version>
+                <version>1.13.2-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
         </dependency>
         <dependency>
@@ -79,6 +83,11 @@
             <artifactId>lombok</artifactId>
             <version>1.16.12</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.boydti</groupId>
+            <artifactId>fawe-api</artifactId>
+            <version>latest</version>
         </dependency>
         <dependency>
           <groupId>com.sk89q.worldedit</groupId>
