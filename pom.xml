@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mcmiddleearth</groupId>
     <artifactId>PluginUtils</artifactId>
-    <version>1.2-SNAPSHOT-native-003</version>
+    <version>1.2-SNAPSHOT-native-005</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -79,6 +79,13 @@
             <version>1.13.2-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit</artifactId>
+            <scope>system</scope>
+            <systemPath>D:\Programme\Minecraft\spigot\1.13\CraftBukkit\target\craftbukkit-1.13.2-R0.1-SNAPSHOT.jar</systemPath>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.12</version>
@@ -93,7 +100,7 @@
           <groupId>com.sk89q.worldedit</groupId>
           <artifactId>worldedit</artifactId>
           <version>own</version>
-          <systemPath>D:\Programme\Minecraft\spigot\1.13\plugins\FastAsyncWorldEdit-bukkit-18.12.29-9556f81-2087.jar</systemPath>
+          <systemPath>D:\Programme\Minecraft\spigot\1.13\plugins\FastAsyncWorldEdit-bukkit-1.13.134.jar</systemPath>
           <scope>system</scope>
         </dependency>
         <!--<dependency>
