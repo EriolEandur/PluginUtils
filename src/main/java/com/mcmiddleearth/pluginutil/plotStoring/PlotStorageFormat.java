@@ -5,6 +5,7 @@
  */
 package com.mcmiddleearth.pluginutil.plotStoring;
 
+import com.mcmiddleearth.pluginutil.plotStoring.MCMEPlotFormat.StoragePlotSnapshot;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,6 +19,8 @@ import org.bukkit.util.Vector;
 public interface PlotStorageFormat {
     
     public void save(IStoragePlot plot, DataOutputStream out) throws IOException;
+
+    public void save(IStoragePlot plot, DataOutputStream out, StoragePlotSnapshot snap) throws IOException;
     
     public void load(IStoragePlot plot, DataInputStream in) throws IOException, InvalidRestoreDataException;
 

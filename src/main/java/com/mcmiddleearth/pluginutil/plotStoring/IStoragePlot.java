@@ -31,4 +31,5 @@ public interface IStoragePlot {
     
     public Location getHighCorner();
     
+    public boolean isInside(Location location);
 }
