@@ -21,9 +21,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_13_R2.EntityPlayer;
-import net.minecraft.server.v1_13_R2.NBTTagCompound;
-import net.minecraft.server.v1_13_R2.PlayerChunk;
 /*import net.minecraft.server.v1_13_R2.EntityTypes;
 import net.minecraft.server.v1_13_R2.NBTCompressedStreamTools;
 import net.minecraft.server.v1_13_R2.NBTReadLimiter;
@@ -39,7 +36,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
 /*import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_13_R2.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.v1_13_R2.entity.CraftEntity;*/
@@ -396,14 +392,17 @@ Logger.getGlobal().info("High Chunk: "+high.getChunk().getX()+" "+high.getChunk(
         for(int x=low.getChunk().getX();x<=high.getChunk().getX();x++) {
             for(int z = low.getChunk().getZ();z<=high.getChunk().getZ();z++) {
 //Logger.getGlobal().info("Update chunk at: "+x+ " "+z);
-                PlayerChunk pc = ((CraftWorld)low.getWorld()).getHandle().getPlayerChunkMap().getChunk(x, z);
+                Object nmsWorld = NMSUtil.invokeCraftBukkit("CraftWorld","getHandle",null,low.getWorld());
+                Object pcm = NMSUtil.invokeNMS("WorldServer", "getPlayerChunkMap",null,nmsWorld);
+                Object pc = NMSUtil.invokeNMS("PlayerChunkMap","getChunk",
+                                              new Class[]{int.class,int.class},pcm,x, z);
                 if(pc!=null) {
 /*Logger.getGlobal().info("Is done: "+pc.e());
 Logger.getGlobal().info("Chunk: "+pc.f());
 Logger.getGlobal().info("ready: "+pc.f().isReady());*/
                     //pc.b();
-                    for(EntityPlayer player: pc.players) {
-                        pc.sendChunk(player);
+                    for(Object player: (Iterable)NMSUtil.getNMSField("PlayerChunk","players", pc)) {
+                        NMSUtil.invokeNMS("PlayerChunk", "sendChunk", null, pc, player);
                     }
                 }
             }
