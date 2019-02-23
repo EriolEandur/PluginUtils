@@ -21,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Slab;
 
 /**
  *
@@ -69,10 +70,6 @@ public class LegacyMaterialUtil {
         return null;
     }
     
-    public static BlockData getBlockData(int id, byte rawData) {
-        return getBlockData(getMaterial(id),rawData);
-    }
-    
     public static BlockData getBlockData(Material blockMat, byte rawData){
         if(blockMat==null) {
             return null;
@@ -81,9 +78,50 @@ public class LegacyMaterialUtil {
         if(world==null) {
             return null;
         }
-        BlockState state = world.getBlockAt(0,0,10).getState();
+        BlockState state = world.getBlockAt(0,0,1).getState();
         state.setType(blockMat);
         state.setRawData(rawData);
         return state.getBlockData();
     }
+    
+    public static BlockData getBlockData(int id, byte rawData) {
+        BlockData special = getSpecialBlockData(id, rawData);
+        if(special!=null) {
+            return special;
+        } else {
+            return getBlockData(getMaterial(id),rawData);
+        }
+    }
+    
+    public static BlockData getSpecialBlockData(int id, byte rawData) {
+        BlockData data = getBlockData(getMaterial(id),rawData);
+        switch(id) {
+            case 125:
+            case 43:
+            case 181:
+            case 204:
+                ((Slab)data).setType(Slab.Type.DOUBLE);
+                break;
+            case 17:
+                switch(rawData) {
+                    case 12:
+                        return Bukkit.createBlockData(Material.OAK_WOOD);
+                    case 13:
+                        return Bukkit.createBlockData(Material.SPRUCE_WOOD);
+                    case 14:
+                        return Bukkit.createBlockData(Material.BIRCH_WOOD);
+                    case 15:
+                        return Bukkit.createBlockData(Material.JUNGLE_WOOD);
+                }
+            case 162:
+                switch(rawData) {
+                    case 12:
+                        return Bukkit.createBlockData(Material.ACACIA_WOOD);
+                    case 13:
+                        return Bukkit.createBlockData(Material.DARK_OAK_WOOD);
+                }
+        }
+        return data;
+    }
+    
 }

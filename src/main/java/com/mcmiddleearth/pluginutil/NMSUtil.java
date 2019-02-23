@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -55,6 +56,22 @@ public class NMSUtil {
                                       .newInstance(block.getX(),block.getY(),block.getZ());
         return nmsWorld.getClass().getMethod("getTileEntity", blockPosition.getClass())
                                   .invoke(nmsWorld, blockPosition);
+    }
+    
+    public static void updatePlayerChunks(Location low, Location high) {
+        for(int x=low.getChunk().getX();x<=high.getChunk().getX();x++) {
+            for(int z = low.getChunk().getZ();z<=high.getChunk().getZ();z++) {
+                Object nmsWorld = NMSUtil.invokeCraftBukkit("CraftWorld","getHandle",null,low.getWorld());
+                Object pcm = NMSUtil.invokeNMS("WorldServer", "getPlayerChunkMap",null,nmsWorld);
+                Object pc = NMSUtil.invokeNMS("PlayerChunkMap","getChunk",
+                                              new Class[]{int.class,int.class},pcm,x, z);
+                if(pc!=null) {
+                    for(Object player: (Iterable)NMSUtil.getNMSField("PlayerChunk","players", pc)) {
+                        NMSUtil.invokeNMS("PlayerChunk", "sendChunk", null, pc, player);
+                    }
+                }
+            }
+        }
     }
     
     public static Object invokeCraftBukkit(String className, String methodName, Class[] argsClasses, 

@@ -91,7 +91,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
     
     @Override
     public void save(IStoragePlot plot, DataOutputStream out) throws IOException{
-Logger.getGlobal().info("Don't use this Async!!!");
+//Logger.getGlobal().info("Don't use this Async!!!");
             StoragePlotSnapshot snap = new StoragePlotSnapshot(plot);
             save(plot, out, snap);
     }
@@ -225,7 +225,9 @@ Logger.getGlobal().info("Don't use this Async!!!");
             Location originalLoc = new Location(location.getWorld(),in.readInt(),in.readInt(),in.readInt());
             final Vector shift = location.clone().subtract(originalLoc).toVector();
 //Logger.getGlobal().info("Shift: "+shift.getBlockX()+" "+shift.getBlockY()+" "+shift.getBlockZ());
+//Logger.getGlobal().info("Size: "+size.getBlockX()+" "+size.getBlockY()+" "+size.getBlockZ());
             Vector originalSize = new Vector(in.readInt(),in.readInt(),in.readInt());
+//Logger.getGlobal().info("OrininalSize: "+originalSize.getBlockX()+" "+originalSize.getBlockY()+" "+originalSize.getBlockZ());
             if(size==null) {
                 size = originalSize;
             }
@@ -376,36 +378,11 @@ Logger.getGlobal().info("Don't use this Async!!!");
                     }
 //Logger.getGlobal().info("Size: "+finalSize.getBlockX()+" "+finalSize.getBlockY()+" "+finalSize.getBlockZ());
                     Location high = location.clone().add(finalSize.toLocation(location.getWorld()));
-                    updatePlayerChunks(location, high);
+                    NMSUtil.updatePlayerChunks(location, high);
                 }
             }.runTaskLater(PluginUtilsPlugin.getInstance(), 1);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(MCMEPlotFormat.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    private void updatePlayerChunks(Location low, Location high) {
-/*Logger.getGlobal().info("Low Block: "+low.getBlockX()+" "+low.getBlockZ());
-Logger.getGlobal().info("Low Chunk: "+low.getChunk().getX()+" "+low.getChunk().getZ());
-Logger.getGlobal().info("High Block: "+high.getBlockX()+" "+high.getBlockZ());
-Logger.getGlobal().info("High Chunk: "+high.getChunk().getX()+" "+high.getChunk().getZ());*/
-        for(int x=low.getChunk().getX();x<=high.getChunk().getX();x++) {
-            for(int z = low.getChunk().getZ();z<=high.getChunk().getZ();z++) {
-//Logger.getGlobal().info("Update chunk at: "+x+ " "+z);
-                Object nmsWorld = NMSUtil.invokeCraftBukkit("CraftWorld","getHandle",null,low.getWorld());
-                Object pcm = NMSUtil.invokeNMS("WorldServer", "getPlayerChunkMap",null,nmsWorld);
-                Object pc = NMSUtil.invokeNMS("PlayerChunkMap","getChunk",
-                                              new Class[]{int.class,int.class},pcm,x, z);
-                if(pc!=null) {
-/*Logger.getGlobal().info("Is done: "+pc.e());
-Logger.getGlobal().info("Chunk: "+pc.f());
-Logger.getGlobal().info("ready: "+pc.f().isReady());*/
-                    //pc.b();
-                    for(Object player: (Iterable)NMSUtil.getNMSField("PlayerChunk","players", pc)) {
-                        NMSUtil.invokeNMS("PlayerChunk", "sendChunk", null, pc, player);
-                    }
-                }
-            }
         }
     }
     
