@@ -22,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.minecraft.server.v1_13_R2.EntityPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -59,16 +60,37 @@ public class NMSUtil {
     }
     
     public static void updatePlayerChunks(Location low, Location high) {
+        Object nmsWorld = NMSUtil.invokeCraftBukkit("CraftWorld","getHandle",null,low.getWorld());
+        Object pcm = NMSUtil.invokeNMS("WorldServer", "getPlayerChunkMap",null,nmsWorld);
         for(int x=low.getChunk().getX();x<=high.getChunk().getX();x++) {
             for(int z = low.getChunk().getZ();z<=high.getChunk().getZ();z++) {
-                Object nmsWorld = NMSUtil.invokeCraftBukkit("CraftWorld","getHandle",null,low.getWorld());
-                Object pcm = NMSUtil.invokeNMS("WorldServer", "getPlayerChunkMap",null,nmsWorld);
                 Object pc = NMSUtil.invokeNMS("PlayerChunkMap","getChunk",
                                               new Class[]{int.class,int.class},pcm,x, z);
                 if(pc!=null) {
                     for(Object player: (Iterable)NMSUtil.getNMSField("PlayerChunk","players", pc)) {
                         NMSUtil.invokeNMS("PlayerChunk", "sendChunk", null, pc, player);
                     }
+                }
+            }
+        }
+    }
+    
+    public static void updatePlayerChunks(Player player, Location low, Location high) {
+        Object nmsWorld = NMSUtil.invokeCraftBukkit("CraftWorld","getHandle",null,low.getWorld());
+        Object pcm = NMSUtil.invokeNMS("WorldServer", "getPlayerChunkMap",null,nmsWorld);
+        for(int x=low.getChunk().getX();x<=high.getChunk().getX();x++) {
+            for(int z = low.getChunk().getZ();z<=high.getChunk().getZ();z++) {
+                Object pc = NMSUtil.invokeNMS("PlayerChunkMap","getChunk",
+                                              new Class[]{int.class,int.class},pcm,x, z);
+                if(pc!=null) {
+                    Object nmsPlayer = NMSUtil.invokeCraftBukkit("entity.CraftPlayer", "getHandle", null, player);
+                    NMSUtil.invokeNMS("PlayerChunk", "sendChunk", null, pc, nmsPlayer);
+                    /*for(Object nmsPlayer: (Iterable)NMSUtil.getNMSField("PlayerChunk","players", pc)) {
+                        if(player==null 
+                                || (NMSUtil.getCraftBukkitClass(("")NMSUtil.invokeNMS("EntityPlayer","getBukkitEntity",null,nmsPlayer)
+                                          .getUniqueId().equals(player.getUniqueId())) {
+                        }
+                    }*/
                 }
             }
         }
