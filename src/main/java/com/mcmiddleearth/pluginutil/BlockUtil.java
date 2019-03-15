@@ -348,5 +348,79 @@ public class BlockUtil {
         return null;
     }
 
+    public static BlockFace rotateBlockFace(BlockFace face, int repetitions) {
+        if(repetitions <= 0) {
+            return face;
+        }
+        BlockFace result;
+        /*if(face.equals(BlockFace.UP) && repetitions == 2) {
+            return BlockFace.DOWN;
+        }
+        if(face.equals(BlockFace.DOWN) && repetitions == 2) {
+            return BlockFace.UP;
+        }*/
+        switch(face) {
+            case NORTH:
+                result = BlockFace.EAST;
+                break;
+            case EAST:
+                result = BlockFace.SOUTH;
+                break;
+            case SOUTH:
+                result = BlockFace.WEST;
+                break;
+            case WEST:
+                result = BlockFace.NORTH;
+                break;
+            case NORTH_EAST:
+                result = BlockFace.SOUTH_EAST;
+                break;
+            case SOUTH_EAST:
+                result = BlockFace.SOUTH_WEST;
+                break;
+            case SOUTH_WEST:
+                result = BlockFace.NORTH_WEST;
+                break;
+            case NORTH_WEST:
+                result = BlockFace.NORTH_EAST;
+                break;
+            case NORTH_NORTH_EAST:
+                result = BlockFace.EAST_SOUTH_EAST;
+                break;
+            case EAST_SOUTH_EAST:
+                result = BlockFace.SOUTH_SOUTH_WEST;
+                break;
+            case SOUTH_SOUTH_WEST:
+                result = BlockFace.WEST_NORTH_WEST;
+                break;
+            case WEST_NORTH_WEST:
+                result = BlockFace.NORTH_NORTH_EAST;
+                break;
+            case EAST_NORTH_EAST:
+                result = BlockFace.SOUTH_SOUTH_EAST;
+                break;
+            case SOUTH_SOUTH_EAST:
+                result = BlockFace.WEST_SOUTH_WEST;
+                break;
+            case WEST_SOUTH_WEST:
+                result = BlockFace.NORTH_NORTH_WEST;
+                break;
+            case NORTH_NORTH_WEST:
+                result = BlockFace.EAST_NORTH_EAST;
+                break;
+            case UP:
+                result = BlockFace.UP;
+                break;
+            case DOWN:
+                result = BlockFace.DOWN;
+                break;
+            default:
+                result = BlockFace.SELF;
+                break;
+        }
+        return rotateBlockFace(result, repetitions-1);
+    }
+    
+
 
 }

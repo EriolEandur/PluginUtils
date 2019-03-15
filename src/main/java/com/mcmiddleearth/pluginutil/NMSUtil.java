@@ -22,11 +22,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_13_R2.EntityPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 /**
  * Utiliy class for NMS methods to a PlayerConnection using reflection
@@ -162,5 +162,19 @@ public class NMSUtil {
             Logger.getLogger(NMSUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+    
+    public static Vector toVector(Object blockPosition) {
+        return new Vector((int) invokeNMS("BaseBlockPosition","getX",null,blockPosition),
+                          (int) invokeNMS("BaseBlockPosition","getY",null,blockPosition),
+                          (int) invokeNMS("BaseBlockPosition","getZ",null,blockPosition));
+    }                       
+    
+    public static Object toBlockPosition(Vector vector) {
+        return createNMSObject("BlockPosition",
+                               new Class[]{int.class,int.class,int.class},
+                               vector.getBlockX(),
+                               vector.getBlockY(),
+                               vector.getBlockZ());
     }
 }
