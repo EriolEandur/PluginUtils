@@ -100,7 +100,7 @@
           <groupId>com.sk89q.worldedit</groupId>
           <artifactId>worldedit</artifactId>
           <version>own</version>
-          <systemPath>D:\Programme\Minecraft\spigot\1.13\plugins\FastAsyncWorldEdit-bukkit-1.13.134.jar</systemPath>
+          <systemPath>D:\Programme\Minecraft\spigot\1.13\plugins\FastAsyncWorldEdit-bukkit-1.13.135.jar</systemPath>
           <scope>system</scope>
         </dependency>
         <!--<dependency>
