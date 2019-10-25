@@ -164,6 +164,34 @@ public class NMSUtil {
         return null;
     }
     
+    public static Object getCraftBukkitField(String className, String fieldName, Object object) {
+        try {
+            Class clazz = getCraftBukkitClass(className);
+            Field field = clazz.getField(fieldName);
+            return field.get(object);
+                    
+        } catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+            Logger.getLogger(NMSUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    public static Object getCraftBukkitDeclaredField(String className, String fieldName, Object object) {
+        try {
+            Class clazz = getCraftBukkitClass(className);
+//for(Field field : clazz.getDeclaredFields()) {
+//    Logger.getGlobal().info("Field: *"+field.getName()+"* searching for: *"+fieldName+"*");
+//}
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(object);
+                    
+        } catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+            Logger.getLogger(NMSUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
     public static Vector toVector(Object blockPosition) {
         return new Vector((int) invokeNMS("BaseBlockPosition","getX",null,blockPosition),
                           (int) invokeNMS("BaseBlockPosition","getY",null,blockPosition),
