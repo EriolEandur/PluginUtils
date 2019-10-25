@@ -35,17 +35,17 @@ public class VoxelUtil {
             
     private static Object getSniperManager() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Plugin plugin = getVoxelSniperPlugin();
-        return (plugin.getClass().getMethod("getSniperManager")).invoke(plugin);
+        return (plugin!=null?(plugin.getClass().getMethod("getSniperManager")).invoke(plugin):null);
     }
     
     private static Object getBrushManager() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Plugin plugin = getVoxelSniperPlugin();
-        return (plugin.getClass().getMethod("getBrushManager")).invoke(plugin);
+        return (plugin!=null?(plugin.getClass().getMethod("getBrushManager")).invoke(plugin):null);
     }
     
     private static Object getSniper(Player player) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Object sManager = getSniperManager();
-        return sManager.getClass().getMethod("getSniperForPlayer", Player.class).invoke(sManager, player);
+        return (sManager!=null?sManager.getClass().getMethod("getSniperForPlayer", Player.class).invoke(sManager, player):null);
     }
     
     private static String getCurrentToolId(Object sniper) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {

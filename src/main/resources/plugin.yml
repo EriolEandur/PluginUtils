@@ -1,9 +1,10 @@
-name: PluginUtils
+name: ${project.artifactId}
 main: com.mcmiddleearth.pluginutil.PluginUtilsPlugin
-version: 1.1.0
+version: ${project.version}
 author: Eriol_Eandur
 load: STARTUP
 softdepend: [ProtocolLib,Essentials]
+api-version: 1.13
 
 commands:
     dev:
