@@ -421,6 +421,79 @@ public class BlockUtil {
         return rotateBlockFace(result, repetitions-1);
     }
     
+    public static BlockFace flipBlockFace(BlockFace face, boolean[] axis) {
+        if(!axis[0] && !axis[1] && !axis[2]) {
+            return face;
+        }
+        BlockFace result;
+        /*if(face.equals(BlockFace.UP) && repetitions == 2) {
+            return BlockFace.DOWN;
+        }
+        if(face.equals(BlockFace.DOWN) && repetitions == 2) {
+            return BlockFace.UP;
+        }*/
+        switch(face) {
+            case NORTH:
+                result = axis[2]?BlockFace.SOUTH:face;
+                break;
+            case EAST:
+                result = axis[0]?BlockFace.WEST:face;
+                break;
+            case SOUTH:
+                result = axis[2]?BlockFace.SOUTH:face;
+                break;
+            case WEST:
+                result = axis[0]?BlockFace.EAST:face;
+                break;
+            case NORTH_EAST:
+                result = axis[0]?(axis[2]?BlockFace.SOUTH_WEST:BlockFace.NORTH_WEST):(axis[2]?BlockFace.SOUTH_EAST:face);
+                break;
+            case SOUTH_EAST:
+                result = axis[0]?(axis[2]?BlockFace.NORTH_WEST:BlockFace.SOUTH_WEST):(axis[2]?BlockFace.NORTH_EAST:face);
+                break;
+            case SOUTH_WEST:
+                result = axis[0]?(axis[2]?BlockFace.NORTH_EAST:BlockFace.SOUTH_EAST):(axis[2]?BlockFace.NORTH_WEST:face);
+                break;
+            case NORTH_WEST:
+                result = axis[0]?(axis[2]?BlockFace.SOUTH_EAST:BlockFace.NORTH_EAST):(axis[2]?BlockFace.SOUTH_WEST:face);
+                break;
+            case NORTH_NORTH_EAST:
+                result = axis[0]?(axis[2]?BlockFace.SOUTH_SOUTH_WEST:BlockFace.NORTH_NORTH_WEST):(axis[2]?BlockFace.SOUTH_SOUTH_EAST:face);
+                break;
+            case EAST_SOUTH_EAST:
+                result = axis[0]?(axis[2]?BlockFace.WEST_NORTH_WEST:BlockFace.WEST_SOUTH_WEST):(axis[2]?BlockFace.EAST_NORTH_EAST:face);
+                break;
+            case SOUTH_SOUTH_WEST:
+                result = axis[0]?(axis[2]?BlockFace.NORTH_NORTH_EAST:BlockFace.SOUTH_SOUTH_EAST):(axis[2]?BlockFace.NORTH_NORTH_WEST:face);
+                break;
+            case WEST_NORTH_WEST:
+                result = axis[0]?(axis[2]?BlockFace.EAST_SOUTH_EAST:BlockFace.EAST_NORTH_EAST):(axis[2]?BlockFace.WEST_SOUTH_WEST:face);
+                break;
+            case EAST_NORTH_EAST:
+                result = axis[0]?(axis[2]?BlockFace.WEST_SOUTH_WEST:BlockFace.WEST_NORTH_WEST):(axis[2]?BlockFace.EAST_SOUTH_EAST:face);
+                break;
+            case SOUTH_SOUTH_EAST:
+                result = axis[0]?(axis[2]?BlockFace.NORTH_NORTH_WEST:BlockFace.SOUTH_SOUTH_WEST):(axis[2]?BlockFace.NORTH_NORTH_EAST:face);
+                break;
+            case WEST_SOUTH_WEST:
+                result = axis[0]?(axis[2]?BlockFace.EAST_NORTH_EAST:BlockFace.EAST_SOUTH_EAST):(axis[2]?BlockFace.WEST_NORTH_WEST:face);
+                break;
+            case NORTH_NORTH_WEST:
+                result = axis[0]?(axis[2]?BlockFace.EAST_SOUTH_EAST:BlockFace.EAST_NORTH_EAST):(axis[2]?BlockFace.WEST_SOUTH_WEST:face);
+                break;
+            case UP:
+                result = axis[1]?BlockFace.DOWN:face;
+                break;
+            case DOWN:
+                result = axis[1]?BlockFace.UP:face;
+                break;
+            default:
+                result = BlockFace.SELF;
+                break;
+        }
+        return result;
+    }
+    
 
 
 }

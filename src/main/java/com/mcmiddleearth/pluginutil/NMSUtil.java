@@ -60,6 +60,7 @@ public class NMSUtil {
     }
     
     public static void updatePlayerChunks(Location low, Location high) {
+        if(true) return; //not implemented in 1.14
         Object nmsWorld = NMSUtil.invokeCraftBukkit("CraftWorld","getHandle",null,low.getWorld());
         Object pcm = NMSUtil.invokeNMS("WorldServer", "getPlayerChunkMap",null,nmsWorld);
         for(int x=low.getChunk().getX();x<=high.getChunk().getX();x++) {

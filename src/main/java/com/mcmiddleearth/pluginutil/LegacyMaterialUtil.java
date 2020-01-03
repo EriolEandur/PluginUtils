@@ -54,9 +54,11 @@ public class LegacyMaterialUtil {
     
     public static Material getMaterial(int id) {
         for(Material mat: Material.values()) {
-            if(mat.getId()==id) {
-                return mat;
-            }
+            try{
+                if(mat.getId()==id) {
+                    return mat;
+                }
+            } catch(IllegalArgumentException ex) {}
         }
         for(Material mat: legacyMaterials) {
             try {
@@ -74,7 +76,7 @@ public class LegacyMaterialUtil {
         if(blockMat==null) {
             return null;
         } 
-        World world = Bukkit.getWorld("world");
+        World world = Bukkit.getWorlds().get(0);
         if(world==null) {
             return null;
         }

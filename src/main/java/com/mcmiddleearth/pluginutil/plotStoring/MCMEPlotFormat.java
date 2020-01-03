@@ -19,15 +19,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import net.minecraft.server.v1_13_R2.GameProfileSerializer;
-import net.minecraft.server.v1_13_R2.NBTTagCompound;
-import net.minecraft.server.v1_13_R2.TileEntity;
-import net.minecraft.server.v1_13_R2.TileEntitySkull;
-import org.apache.commons.lang3.StringUtils;
+import net.minecraft.server.v1_14_R1.GameProfileSerializer;
+import net.minecraft.server.v1_14_R1.NBTTagCompound;
+import net.minecraft.server.v1_14_R1.TileEntity;
+import net.minecraft.server.v1_14_R1.TileEntitySkull;
+//import org.apache.commons.lang3.StringUtils;
 /*import net.minecraft.server.v1_13_R2.EntityTypes;
 import net.minecraft.server.v1_13_R2.NBTCompressedStreamTools;
 import net.minecraft.server.v1_13_R2.NBTReadLimiter;
@@ -160,7 +161,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
             for(int x = plot.getLowCorner().getBlockX(); x <= plot.getHighCorner().getBlockX(); ++x) {
                 for(int z = plot.getLowCorner().getBlockZ(); z <= plot.getHighCorner().getBlockZ(); ++z) {
                     int biomeIndex = biomePaletteMap.get(snap.getBiome(x, z));
-//Logger.getGlobal().info("save biome: "+biomeIndex +" "+snap.getBiome(x,z));
+//Logger.getGlobal().info("save biome: "+biomeIndex +" "+snap.getBiome(x,z)+"save maxY: "+snap.getMaxY(x,z));
                     out.writeInt(biomeIndex);
                     out.writeInt(snap.getMaxY(x, z));
                     for(int y = plot.getLowCorner().getBlockY(); y <= plot.getHighCorner().getBlockY()
@@ -299,7 +300,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                 throw new InvalidRestoreDataException("Unexpected Restore Data Size");
             }
             resultSize = size;
-            final Rotation90 rotation = new Rotation90(location.toVector(),size,rotations);
+            final LocalTransformation rotation = new LocalTransformation(location.toVector(),size,rotations,flip);
 //Logger.getGlobal().info("Size: "+size.getBlockX()+" "+size.getBlockY()+" "+size.getBlockZ());
 //Logger.getGlobal().info("finalSize: "+finalSize.getBlockX()+" "+finalSize.getBlockY()+" "+finalSize.getBlockZ());
             int maxX;
@@ -335,7 +336,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                 in.readFully(byteData);
                 BlockData blockData = Bukkit.getServer()
                                             .createBlockData(new String(byteData,Charset.forName("UTF-8")));
-                palette.put(i, rotation.rotateBlockData(blockData));
+                palette.put(i, rotation.transformBlockData(blockData));
             }
             int biomePaletteLength = in.readInt();
             Map<Integer,Biome> biomePalette = new HashMap<>(biomePaletteLength);
@@ -350,10 +351,10 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                 biomePalette.put(i, biome);
             }
 //log("location",location);
-            Vector rotatedLowCorner = rotation.rotateVector(location.toVector(),true);
+            Vector rotatedLowCorner = rotation.transformVector(location.toVector(),true);
 //log("rotated", rotatedLowCorner);
 //log("size",size);
-            Vector rotatedHighCorner = rotation.rotateVector(location.toVector()
+            Vector rotatedHighCorner = rotation.transformVector(location.toVector()
                                                   .add(size).subtract(new Vector(1,1,1)),true);
 //log("rotatedHigh", rotatedHighCorner);
             int xIncrement = (rotatedLowCorner.getBlockX()<=rotatedHighCorner.getBlockX()?1:-1);
@@ -361,6 +362,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
             int zIncrement = (rotatedLowCorner.getBlockZ()<=rotatedHighCorner.getBlockZ()?1:-1);
 //Logger.getGlobal().info("zinc " +zIncrement);
             int firstStart, firstEnd, firstInc, secondStart, secondEnd, secondInc;
+            int temp;
             if(rotations%2==0) {
                 firstStart = rotatedLowCorner.getBlockX();
                 firstEnd = rotatedHighCorner.getBlockX();
@@ -368,6 +370,20 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                 secondStart = rotatedLowCorner.getBlockZ();
                 secondEnd = rotatedHighCorner.getBlockZ();
                 secondInc = zIncrement;
+                /*if(flip[0]) {
+    //Logger.getGlobal().info("flip x");
+                    temp = firstStart;
+                    firstStart = firstEnd;
+                    firstEnd = temp;
+                    firstInc = -firstInc;
+                } 
+                if(flip[2]) {
+    //Logger.getGlobal().info("flip z");
+                    temp = secondStart;
+                    secondStart = secondEnd;
+                    secondEnd = temp;
+                    secondInc = - secondInc;
+                }*/
             } else {
                 firstStart = rotatedLowCorner.getBlockZ();
                 firstEnd = rotatedHighCorner.getBlockZ();
@@ -375,16 +391,20 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                 secondStart = rotatedLowCorner.getBlockX();
                 secondEnd = rotatedHighCorner.getBlockX();
                 secondInc = xIncrement;
-            }
-            int temp;
-            if(flip[0]) {
-                temp = firstStart;
-                firstStart = firstEnd;
-                firstEnd = temp;
-            } else if(flip[2]) {
-                temp = secondStart;
-                secondStart = secondEnd;
-                secondEnd = temp;
+                /*if(flip[2]) {
+    //Logger.getGlobal().info("flip x rotated");
+                    temp = firstStart;
+                    firstStart = firstEnd;
+                    firstEnd = temp;
+                    firstInc = -firstInc;
+                } 
+                if(flip[0]) {
+    //Logger.getGlobal().info("flip z rotated");
+                    temp = secondStart;
+                    secondStart = secondEnd;
+                    secondEnd = temp;
+                    secondInc = - secondInc;
+                }*/
             }
             BlockData air = Bukkit.createBlockData(Material.AIR);
             for(int i = firstStart;
@@ -408,25 +428,30 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                     if(biome != null && withBiome) {
                         location.getWorld().setBiome(x, z, biome);
                     } 
-                    int maxY = in.readInt();
+                    int maxY = in.readInt() + shift.getBlockY();
                     int yStart = location.getBlockY();
-                    int yEnd = yStart+size.getBlockY()-1;
+                    int yEnd = yStart+size.getBlockY();
                     int yInc = 1;
+                    int columnCountMax = Math.min(yEnd,maxY)-yStart;
+                    int columnCount = 0;
                     if(flip[1]) {
+//Logger.getGlobal().info("flip y");
                         temp = yStart;
-                        yStart = yEnd;
-                        yEnd = temp;
+                        yStart = yEnd-1;
+                        yEnd = temp-1;
                         yInc = -1;
                     }
-                    for(int y = yStart; y <= yEnd; y = y+ yInc) {
+                    for(int y = yStart; y != yEnd; y = y+ yInc) {
                         //Location loc = rotation.rotateVector(new Vector(x, y, z),true).toLocation(location.getWorld());
-//Logger.getGlobal().info("Block: "+location.getWorld().getName()+" "+x+" "+y+" "+z+" "+location.getBlock().getType());
+//Logger.getGlobal().info("Block: "+location.getWorld().getName()+" "+x+" "+y+" "+z+" "+location.getBlock().getType()+" maxY "+maxY+" cC "+columnCount+" ccM "+columnCountMax);
 //Logger.getGlobal().log(Level.INFO, "Rotated: {0} {1} {2}", new Object[]{location.getBlockX(),location.getBlockY(),location.getBlockZ()});
-                        if(y<=maxY) {
+                        //if(y<=maxY) {
+                        if(columnCount <= columnCountMax) {
                             BlockData data = palette.get(in.readInt());
                             if(withAir || !data.getMaterial().equals(Material.AIR)) {
                                 location.getWorld().getBlockAt(x, y, z).setBlockData(data,false);
                             }
+                            columnCount++;
                         } else {
                             if(withAir) {
                                 location.getWorld().getBlockAt(x, y, z).setBlockData(air,false);
@@ -477,18 +502,18 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                     for(Object nbt: tileEntityDatas) {
                         try {
                             Object nmsWorld = NMSUtil.invokeCraftBukkit("CraftWorld", "getHandle", null, location.getWorld());
-                            //Logger.getGlobal().info("TileEntity: "+((NBTTagCompound)nbt).asString());
-                            Class[]argsClasses = new Class[]{NMSUtil.getNMSClass("NBTTagCompound"),
-                                NMSUtil.getNMSClass("World")};
+        //  Logger.getGlobal().info("TileEntity: "+((NBTTagCompound)nbt).asString());
+                            Class[]argsClasses = new Class[]{NMSUtil.getNMSClass("NBTTagCompound")/*,
+                                NMSUtil.getNMSClass("World")*/};
         //Logger.getGlobal().info("loading nbt TileEntity: "+nbt.toString());
-                            Object entity = NMSUtil.invokeNMS("TileEntity","create",argsClasses, null,nbt,nmsWorld);
+                            Object entity = NMSUtil.invokeNMS("TileEntity","create",argsClasses, null,nbt/*,nmsWorld*/);
                             Object position = NMSUtil.invokeNMS("TileEntity", "getPosition", null, entity);
                             argsClasses = new Class[]{double.class,double.class,double.class};
                             //get position of tile entity and apply transform
                             Object newPosition = NMSUtil.invokeNMS("BlockPosition", "a", argsClasses, position, shift.getBlockX(),
                                     shift.getBlockY(),
                                     shift.getBlockZ());
-                            final Vector rotatedVector = rotation.rotateVector(NMSUtil.toVector(newPosition),true);
+                            final Vector rotatedVector = rotation.transformVector(NMSUtil.toVector(newPosition),true);
 
                             TileEntity tileEntity = (TileEntity) entity;
                             if (!(tileEntity instanceof TileEntitySkull)) {
@@ -511,7 +536,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                                     if (var8.hasKeyOfType("Owner", 10)) {
         //Logger.getGlobal().info("Custom head type 10");
                                         var7 = GameProfileSerializer.deserialize(var8.getCompound("Owner"));
-                                    } else if (var8.hasKeyOfType("Owner", 8) && !StringUtils.isBlank(var8.getString("SkullOwner"))) {
+                                    } else if (var8.hasKeyOfType("Owner", 8) && !var8.getString("SkullOwner").equals("")) {
         //Logger.getGlobal().info("Custom head type 8");
                                         var7 = new GameProfile(null, var8.getString("Owner"));
                                     }
@@ -564,11 +589,11 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                             Class[] argsClassesC = new Class[]{int.class};
                             double[] position = new double[3];
                             for(int i = 0; i<3; i++) {
-                                position[i] = (double)NMSUtil.invokeNMS("NBTTagList", "k", 
+                                position[i] = (double)NMSUtil.invokeNMS("NBTTagList", "h", 
                                                                 argsClassesC,list,i);
                             }
 //Logger.getGlobal().log(Level.INFO, "NBT: "+nbt.toString());
-                            Vector newPosition = rotation.rotateVector(new Vector(position[0]+shift.getBlockX(),
+                            Vector newPosition = rotation.transformVector(new Vector(position[0]+shift.getBlockX(),
                                                                             position[1]+shift.getBlockY(),
                                                                             position[2]+shift.getBlockZ()),
                                                                             false);
@@ -607,11 +632,11 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                             Object rotList = NMSUtil.invokeNMS("NBTTagCompound","getList",
                                                 new Class[]{String.class,int.class},
                                                 nbt,"Rotation",5); // 5= content type float > NBTBase
-                            float yaw = (float) NMSUtil.invokeNMS("NBTTagList", "l", 
+                            float yaw = (float) NMSUtil.invokeNMS("NBTTagList", "i", 
                                                                 new Class[]{int.class},rotList,0);
                             NMSUtil.invokeNMS("NBTTagList","a",argsClassesA,rotList,
                                               0,NMSUtil.createNMSObject("NBTTagFloat",new Class[]{float.class}, 
-                                                        rotation.rotateYaw(yaw)));        
+                                                        rotation.transformYaw(yaw)));        
                             NMSUtil.invokeNMS("NBTTagCompound","set",
                                               new Class[]{String.class,NMSUtil.getNMSClass("NBTBase")},
                                               nbt,"Rotation",rotList);
@@ -625,23 +650,18 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                                 facing = (Byte)  NMSUtil.invokeNMS("NBTTagCompound","getByte",
                                                     new Class[]{String.class},
                                                     nbt,"Facing");
-                                facing = rotation.rotateHangingEntity(type,facing);
+                                Byte transformedFacing = rotation.transformHangingEntity(type,facing);
                                 Object nbtFacing= NMSUtil.createNMSObject("NBTTagByte",new Class[]{byte.class}, 
-                                                            facing);
+                                                            transformedFacing);
                                 NMSUtil.invokeNMS("NBTTagCompound","set",
                                                   new Class[]{String.class,NMSUtil.getNMSClass("NBTBase")},
                                                   nbt,"Facing",nbtFacing);
-                                if(type.equals("minecraft:item_frame") && facing < 2) {
+                                if(type.equals("minecraft:item_frame") /*&& transformedFacing < 2*/) {
                                     Byte itemRot = (Byte)  NMSUtil.invokeNMS("NBTTagCompound","getByte",
                                                         new Class[]{String.class},
                                                         nbt,"ItemRotation");
-                                    
-                                    if(facing==1) {
-                                        itemRot = (byte)(itemRot+2*rotations);
-                                    } else if(facing == 0) {
-                                        itemRot = (byte)(itemRot+(8-2*rotations));
-                                    }
-                                    itemRot = (byte)(itemRot%8);
+Logger.getGlobal().info("itemFrame: "+newPosition.getX()+" "+newPosition.getY()+" "+newPosition.getZ()+" "+facing +" "+itemRot);
+                                    itemRot = rotation.transformItemRotation(facing,itemRot);
                                     Object nbtItemRot= NMSUtil.createNMSObject("NBTTagByte",new Class[]{byte.class}, 
                                                                 itemRot);
                                     NMSUtil.invokeNMS("NBTTagCompound","set",
@@ -700,10 +720,11 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                                                               NMSUtil.getNMSClass("World")};
                             Object entity = NMSUtil.invokeNMS("EntityTypes","a",argsClasses,null,nbt,nmsWorld);
                              
+//Logger.getGlobal().info("ENTITY: "+entity.getClass().getCanonicalName());
                              //add entity to world
                             argsClasses = new Class[]{NMSUtil.getNMSClass("Entity"),
                                                       CreatureSpawnEvent.SpawnReason.CUSTOM.getClass()};
-                            NMSUtil.invokeNMS("WorldServer","addEntity",argsClasses,nmsWorld,entity, 
+                            NMSUtil.invokeNMS("WorldServer","addEntity",argsClasses,nmsWorld,((Optional)entity).get(), 
                                               CreatureSpawnEvent.SpawnReason.CUSTOM);
                         } catch (ClassNotFoundException ex) {
                             Logger.getLogger(MCMEPlotFormat.class.getName()).log(Level.SEVERE, null, ex);
