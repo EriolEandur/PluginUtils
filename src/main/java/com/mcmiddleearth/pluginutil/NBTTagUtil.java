@@ -141,4 +141,14 @@ public class NBTTagUtil {
         return null;
     }
     
+    public static String asString(Object tag) {
+        try {
+            if(NMSUtil.getNMSClass("NBTBase").isInstance(tag)) {
+                return (String) NMSUtil.invokeNMS("NBTBase","asString",new Class[]{},tag);
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(NBTTagUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
+    }
 }
