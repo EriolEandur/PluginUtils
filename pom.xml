@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mcmiddleearth</groupId>
     <artifactId>PluginUtils</artifactId>
-    <version>1.2.3</version>
+    <version>1.2.4</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -43,10 +43,10 @@
             <id>dynmap-repo</id>
             <url>http://repo.mikeprimm.com/</url>
         </repository>
-        <repository>
+        <!--<repository>
             <id>fawe-repo</id>
             <url>http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/</url>
-        </repository>
+        </repository>-->
         <repository>
             <id>sk89q-snapshots</id>
             <url>http://maven.sk89q.com/artifactory/repo</url>
@@ -81,8 +81,8 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
-            <scope>system</scope>
-            <systemPath>D:\Programme\Minecraft\spigot\1.14.4\CraftBukkit\target\craftbukkit-1.14.4-R0.1-SNAPSHOT.jar</systemPath>
+            <scope>provided</scope>
+            <!--<systemPath>D:\Programme\Minecraft\spigot\1.14.4\CraftBukkit\target\craftbukkit-1.14.4-R0.1-SNAPSHOT.jar</systemPath>-->
             <version>1.14.4-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

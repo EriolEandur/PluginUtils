@@ -27,12 +27,13 @@ import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.World;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class FAWEUtil {
+public class WEUtil {
     
     public static Region getSelection(Player player) {
         WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
@@ -40,7 +41,18 @@ public class FAWEUtil {
         try {
             return session.getSelection(session.getSelectionWorld());
         } catch (IncompleteRegionException ex) {
-            Logger.getLogger(FAWEUtil.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WEUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    public static World getWEWorld(Player player) {
+        WorldEditPlugin worldEdit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
+        LocalSession session = worldEdit.getSession(player);
+        try {
+            return session.getSelectionWorld();
+        } catch (Exception ex) {
+            Logger.getLogger(WEUtil.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
