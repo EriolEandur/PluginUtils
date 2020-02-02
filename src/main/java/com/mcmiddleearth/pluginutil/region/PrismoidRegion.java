@@ -16,7 +16,8 @@
  */
 package com.mcmiddleearth.pluginutil.region;
 
-import com.sk89q.worldedit.BlockVector2D;
+//import com.sk89q.worldedit.BlockVector2D;
+import com.sk89q.worldedit.math.BlockVector2;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -49,7 +50,7 @@ public class PrismoidRegion extends Region{
             return;
         }
         
-        for(BlockVector2D point: weRegion.getPoints()) {
+        for(BlockVector2 point: weRegion.getPoints()) {
             xPoints.add(point.getBlockX());
             zPoints.add(point.getBlockZ());
         }
