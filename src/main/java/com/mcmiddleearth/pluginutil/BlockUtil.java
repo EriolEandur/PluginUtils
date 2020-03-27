@@ -14,12 +14,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.World;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
@@ -28,6 +29,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -109,21 +111,25 @@ public class BlockUtil {
     }
     
     private static void storeSimple(ConfigurationSection config, List<Block> blocks) {
-        List<int[]> blockdata = new ArrayList<>();
+        List<String> blockdata = new ArrayList<>();
         for(Block block: blocks) {
-            blockdata.add(getBlockData(block));
+            blockdata.add(getBlockInformation(block));
         }
         config.set("simple", blockdata);
     }
     
     private static boolean restoreSimple(ConfigurationSection config, List<BlockState> blocks, boolean updateBlocks) {
-        List<?> blockDataList = config.getList("simple");
-        if(blockDataList==null) {
+        List<String> blockList = config.getStringList("simple");
+        if(blockList.isEmpty()) {
             return true;
         }
-        World world = Bukkit.getWorld(config.getString("world"));
+        String worldName = config.getString("world");
+        if(worldName==null) {
+            return false;
+        }
+        World world = Bukkit.getWorld(worldName);
         if(world!=null) {
-            for(Object rawData: blockDataList) {
+            for(String rawData: blockList) {
                 BlockState state = getBaseBlockState(world, rawData);
                 blocks.add(state);
                 if(updateBlocks) {
@@ -139,29 +145,24 @@ public class BlockUtil {
         List<Map<String,Object>> blockDataList = new ArrayList<>();
         for(Block block: blocks) {
             Map<String,Object> blockData= new HashMap<>();
-            blockData.put("basic", getBlockData(block));
-            switch(block.getType()) {
-                case LEGACY_WALL_SIGN:
-                case LEGACY_SIGN_POST:
-                    blockData.put("lines", ((Sign)block.getState()).getLines());
-                    break;
-                case LEGACY_STANDING_BANNER:
-                case LEGACY_WALL_BANNER:
-                    blockData.put("color", ((Banner)block.getState()).getBaseColor().name());
-                    List<Map<String,Object>> patternList = new ArrayList<>();
-                    for(Pattern pattern : ((Banner)block.getState()).getPatterns()) {
-                        patternList.add(pattern.serialize());
-                    }
-                    blockData.put("pattern", patternList);
-                    break;
-                case LEGACY_SKULL:
-                    blockData.put("type", ((Skull)block.getState()).getSkullType().name());
-                    blockData.put("rotation", ((Skull)block.getState()).getRotation().name());
-                    blockData.put("owner", ((Skull)block.getState()).getOwner());
-                    if(((Skull)block.getState()).getSkullType().equals(SkullType.PLAYER)) {
-                        blockData.put("headItem", serializeHead((Skull)block.getState()));
-                    }
-                    break;
+            blockData.put("basic", getBlockInformation(block));
+            if(block.getState() instanceof Sign) {
+                blockData.put("lines", ((Sign)block.getState()).getLines());
+            } else if(block.getState() instanceof Banner) {
+                blockData.put("color", ((Banner)block.getState()).getBaseColor().name());
+                List<Map<String,Object>> patternList = new ArrayList<>();
+                for(Pattern pattern : ((Banner)block.getState()).getPatterns()) {
+                    patternList.add(pattern.serialize());
+                }
+                blockData.put("pattern", patternList);
+            } else if(block.getState() instanceof Skull) {
+                //blockData.put("type", ((Skull)block.getState()).getSkullType().name());
+                //blockData.put("rotation", ((Skull)block.getState()).getRotation().name());
+                blockData.put("owner", ((Skull)block.getState()).getOwningPlayer().getUniqueId().toString());
+                if((block.getType().equals(Material.PLAYER_HEAD) || block.getType().equals(Material.PLAYER_WALL_HEAD))) {
+                    //blockData.put("headItem", serializeHead((Skull)block.getState()));
+                    blockData.put("headItemMeta", serializeHeadMeta((Skull)block.getState()));
+                }
             }
             blockDataList.add(blockData);
         }
@@ -173,43 +174,51 @@ public class BlockUtil {
         if(blockDataList==null) {
             return true;
         }
-        World world = Bukkit.getWorld(config.getString("world"));
+        String worldName = config.getString("world");
+        if(worldName==null) {
+            return false;
+        }
+        World world = Bukkit.getWorld(worldName);
         if(world!=null) {
             for(Object rawData: blockDataList) {
                 Map<String,Object> data = (Map<String,Object>) rawData;
-                BlockState state = getBaseBlockState(world, data.get("basic"));
+                BlockState state = getBaseBlockState(world, (String)data.get("basic"));
                 if(updateBlocks) {
                     state.update(true, false);
                     state = state.getBlock().getState();
-                    switch(state.getType()) {
-                    case LEGACY_WALL_SIGN:
-                    case LEGACY_SIGN_POST:
+                    if(state instanceof Sign) {
                         for(int i= 0; i<4;i++) {
                             String[] lines = ((List<String>) data.get("lines")).toArray(new String[0]);
                             ((Sign) state).setLine(i, lines[i]);
                         }
-                        break;
-                    case LEGACY_STANDING_BANNER:
-                    case LEGACY_WALL_BANNER:
+                        state.update(true, false);
+                    } else if(state instanceof Banner) {
                         DyeColor color = DyeColor.valueOf((String) data.get("color"));
                         ((Banner) state).setBaseColor(color);
                         List<Map<String,Object>> patternList = (List<Map<String,Object>>) data.get("pattern");
                         for(Map<String,Object> patternData : patternList) {
                             Pattern pattern = new Pattern(patternData);
-                            ((Banner) state).addPattern(new Pattern(patternData));
+                            ((Banner) state).addPattern(pattern);
                         }
-                        break;
-                    case LEGACY_SKULL:
-                        ((Skull) state).setSkullType(SkullType.valueOf((String) data.get("type")));
-                        if(((Skull)state).getSkullType().equals(SkullType.PLAYER)) {
-                            deserializeHead(state.getBlock(), (ItemStack)data.get("headItem"));
+                        state.update(true, false);
+                    } else if(state instanceof Skull) {
+                        //((Skull) state).setSkullType(SkullType.valueOf((String) data.get("type")));
+                        if(state.getType().equals(Material.PLAYER_HEAD) 
+                          || state.getType().equals(Material.PLAYER_WALL_HEAD)) {
+                            ItemStack item = new ItemStack(state.getType());//ItemStack)data.get("headItem");
+//Logger.getGlobal().info("meta : "+item.getItemMeta());
+                            ItemMeta meta = (ItemMeta)data.get("headItemMeta");
+//Logger.getGlobal().info("meta extra: "+meta);
+                            item.setItemMeta(meta);
+                            deserializeHead(state.getBlock(), item);
                         }
                         state = state.getBlock().getState();
-                        ((Skull) state).setRotation(BlockFace.valueOf((String) data.get("rotation")));
-                        ((Skull) state).setOwner((String) data.get("owner"));
-                        break;
+                        //((Skull) state).setRotation(BlockFace.valueOf((String) data.get("rotation")));
+                        ((Skull) state).setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString((String)data.get("owner"))));
+                        //break;
+                    } else {
+                        state.update(true, false);
                     }
-                    state.update(true, false);
                 }
                 blocks.add(state);
             }
@@ -218,27 +227,35 @@ public class BlockUtil {
         return false;
     }
     
-    private static BlockState getBaseBlockState(World world, Object rawData) {
-                List<Integer> data = (List<Integer>) rawData;
-                BlockState state = world.getBlockAt(data.get(0), data.get(1), data.get(2)).getState();
-                state.setType(LegacyMaterialUtil.getMaterial(data.get(3)));
-                state.setRawData(data.get(4).byteValue());
-                return state;
+    private static BlockState getBaseBlockState(World world, String data) {
+        String[] blockInfo = data.split("::");
+        BlockState state = world.getBlockAt(Integer.parseInt(blockInfo[0]),
+                                            Integer.parseInt(blockInfo[1]),
+                                            Integer.parseInt(blockInfo[2])).getState();
+        BlockData blockData = Bukkit.createBlockData(blockInfo[3]);
+        state.setBlockData(blockData);
+        //state.setType(LegacyMaterialUtil.getMaterial(data.get(3)));
+        //state.setRawData(data.get(4).byteValue());
+        return state;
     }
     
-    private static int[] getBlockData(Block block) {
+    private static String getBlockInformation(Block block) {
         int[] data = new int[5];
         data[0] = block.getLocation().getBlockX();
         data[1] = block.getLocation().getBlockY();
         data[2] = block.getLocation().getBlockZ();
-        data[3] = block.getType().getId();
-        data[4] = block.getData();
-        return data;
+        /*data[3] = block.getType().getId();
+        data[4] = block.getData();*/
+        return data[0]+"::"+data[1]+"::"+data[2]+"::"+block.getBlockData().getAsString();
     }
 
     private static boolean isSimple(Block block) {
-        switch(block.getType()) {
-                case LEGACY_WALL_SIGN:
+        BlockState state = block.getState();
+        return !(  state instanceof Sign
+                || state instanceof Banner
+                || state instanceof Skull);
+                
+        /*        case LEGACY_WALL_SIGN:
                 case LEGACY_SIGN_POST:
                 case LEGACY_STANDING_BANNER:
                 case LEGACY_WALL_BANNER:
@@ -246,12 +263,13 @@ public class BlockUtil {
                     return false;
                 default:
                     return true;
-        }
+        }*/
     }
     
     public static boolean isTransparent(Location loc) {
         Material mat = loc.getBlock().getType();
-        switch(mat) {
+        return mat.isOccluding();
+        /*switch(mat) {
             case LEGACY_AIR:
             case LEGACY_GLASS:
             case LEGACY_LONG_GRASS:
@@ -299,25 +317,27 @@ public class BlockUtil {
                 return true;
             default: 
                 return false;
-        }
+        }*/
     }
  
     private static void deserializeHead(Block block, ItemStack head) {
         try {
+            
+//Logger.getGlobal().info("meta new: "+head.getItemMeta());
             BlockState blockState = block.getState();
-            blockState.setType(Material.LEGACY_SKULL);
-            blockState.update(true, false);
-            blockState = block.getState();
+            //blockState.setType(head.getType());
+            //blockState.update(true, false);
+            //blockState = block.getState();
             Skull skullData = (Skull) blockState;
-            skullData.setSkullType(SkullType.PLAYER);
+            //skullData.setSkullType(SkullType.PLAYER);
             Field profileField = head.getItemMeta().getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
             GameProfile profile = (GameProfile) profileField.get(head.getItemMeta());
             profileField = skullData.getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
             profileField.set(skullData, profile);
-            skullData.setRawData((byte)1);
-            skullData.setRotation(BlockFace.NORTH_NORTH_EAST);
+            //skullData.setRawData((byte)1);
+            //skullData.setRotation(BlockFace.NORTH_NORTH_EAST);
             skullData.update(true, false);
         } catch (NoSuchFieldException | SecurityException e) {
             Bukkit.getLogger().log(Level.SEVERE, "No such method exception during reflection.", e);
@@ -332,7 +352,8 @@ public class BlockUtil {
             profileField.setAccessible(true);
             GameProfile profile = (GameProfile) profileField.get(skullBlockState);
 
-            ItemStack head = new ItemStack(Material.LEGACY_SKULL_ITEM, 1, (short) 3);
+            //ItemStack head = new ItemStack(Material.LEGACY_SKULL_ITEM, 1, (short) 3);
+            ItemStack head = new ItemStack(skullBlockState.getType());
             ItemMeta headMeta = head.getItemMeta();
             
             profileField = headMeta.getClass().getDeclaredField("profile");
@@ -340,6 +361,29 @@ public class BlockUtil {
             profileField.set(headMeta, profile);
             head.setItemMeta(headMeta);
             return head;
+        } catch (NoSuchFieldException | SecurityException e) {
+            Bukkit.getLogger().log(Level.SEVERE, "No such method exception during reflection.", e);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            Bukkit.getLogger().log(Level.SEVERE, "Unable to use reflection.", e);
+        }
+        return null;
+    }
+
+    private static ItemMeta serializeHeadMeta(Skull skullBlockState) {
+        try {
+            Field profileField = skullBlockState.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            GameProfile profile = (GameProfile) profileField.get(skullBlockState);
+
+            //ItemStack head = new ItemStack(Material.LEGACY_SKULL_ITEM, 1, (short) 3);
+            ItemStack head = new ItemStack(skullBlockState.getType());
+            ItemMeta headMeta = head.getItemMeta();
+            
+            profileField = headMeta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            profileField.set(headMeta, profile);
+            //head.setItemMeta(headMeta);
+            return headMeta;
         } catch (NoSuchFieldException | SecurityException e) {
             Bukkit.getLogger().log(Level.SEVERE, "No such method exception during reflection.", e);
         } catch (IllegalArgumentException | IllegalAccessException e) {

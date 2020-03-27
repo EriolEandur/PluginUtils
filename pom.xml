@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mcmiddleearth</groupId>
     <artifactId>PluginUtils</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -78,13 +78,13 @@
             <artifactId>spigot</artifactId>
             <version>1.14.4-R0.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
             <scope>provided</scope>
-            <!--<systemPath>D:\Programme\Minecraft\spigot\1.14.4\CraftBukkit\target\craftbukkit-1.14.4-R0.1-SNAPSHOT.jar</systemPath>-->
+            <systemPath>D:\Programme\Minecraft\spigot\1.14.4\CraftBukkit\target\craftbukkit-1.14.4-R0.1-SNAPSHOT.jar</systemPath>
             <version>1.14.4-R0.1-SNAPSHOT</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
