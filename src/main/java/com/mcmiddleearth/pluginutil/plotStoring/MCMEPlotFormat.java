@@ -5,6 +5,7 @@
  */
 package com.mcmiddleearth.pluginutil.plotStoring;
 
+import com.mcmiddleearth.pluginutil.NBTTagUtil;
 import com.mcmiddleearth.pluginutil.NMSUtil;
 import com.mojang.authlib.GameProfile;
 import java.io.DataInput;
@@ -24,16 +25,10 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import net.minecraft.server.v1_14_R1.GameProfileSerializer;
-import net.minecraft.server.v1_14_R1.NBTTagCompound;
-import net.minecraft.server.v1_14_R1.TileEntity;
-import net.minecraft.server.v1_14_R1.TileEntitySkull;
-//import org.apache.commons.lang3.StringUtils;
-/*import net.minecraft.server.v1_13_R2.EntityTypes;
-import net.minecraft.server.v1_13_R2.NBTCompressedStreamTools;
-import net.minecraft.server.v1_13_R2.NBTReadLimiter;
-import net.minecraft.server.v1_13_R2.NBTTagCompound;
-import net.minecraft.server.v1_13_R2.TileEntity;*/
+import net.minecraft.server.v1_15_R1.GameProfileSerializer;
+import net.minecraft.server.v1_15_R1.NBTTagCompound;
+import net.minecraft.server.v1_15_R1.TileEntity;
+import net.minecraft.server.v1_15_R1.TileEntitySkull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -193,7 +188,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                         new MCMEEntityFilter());*/
             out.writeInt(entities.size());
             for(Entity entity: entities) {
-                Object nbt = NMSUtil.createNMSObject("NBTTagCompound",null);
+                Object nbt = NBTTagUtil.createNBTCompound();
                 Object nmsEntity = NMSUtil.invokeCraftBukkit("entity.CraftEntity", "getHandle",
                                                              null, entity);
                 NMSUtil.invokeNMS("NBTTagCompound","setString",null, nbt,"id", 
@@ -599,14 +594,11 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                                                                             false);
 //Logger.getGlobal().log(Level.INFO, "Rotated: {0} {1} {2}", new Object[]{newPosition.getBlockX(),newPosition.getBlockY(),newPosition.getBlockZ()});
                             NMSUtil.invokeNMS("NBTTagList","a",argsClassesA,list,
-                                              0,NMSUtil.createNMSObject("NBTTagDouble",argsClassesB, 
-                                                        newPosition.getX()));        
+                                              0,NBTTagUtil.createNBTTagDouble(newPosition.getX()));        
                             NMSUtil.invokeNMS("NBTTagList","a",argsClassesA,list,
-                                              1,NMSUtil.createNMSObject("NBTTagDouble",argsClassesB, 
-                                                        newPosition.getY()));        
+                                              1,NBTTagUtil.createNBTTagDouble(newPosition.getY()));        
                             NMSUtil.invokeNMS("NBTTagList","a",argsClassesA,list,
-                                              2,NMSUtil.createNMSObject("NBTTagDouble",argsClassesB, 
-                                                        newPosition.getZ()));        
+                                              2,NBTTagUtil.createNBTTagDouble(newPosition.getZ()));        
                             /*NMSUtil.invokeNMS("NBTTagList","a",argsClassesA,list,
                                               0,NMSUtil.createNMSObject("NBTTagDouble",argsClassesB, 
                                                         ((double)NMSUtil.invokeNMS("NBTTagList", "k", 
@@ -635,8 +627,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                             float yaw = (float) NMSUtil.invokeNMS("NBTTagList", "i", 
                                                                 new Class[]{int.class},rotList,0);
                             NMSUtil.invokeNMS("NBTTagList","a",argsClassesA,rotList,
-                                              0,NMSUtil.createNMSObject("NBTTagFloat",new Class[]{float.class}, 
-                                                        rotation.transformYaw(yaw)));        
+                                              0,NBTTagUtil.createNBTTagFloat(rotation.transformYaw(yaw)));        
                             NMSUtil.invokeNMS("NBTTagCompound","set",
                                               new Class[]{String.class,NMSUtil.getNMSClass("NBTBase")},
                                               nbt,"Rotation",rotList);
@@ -651,8 +642,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                                                     new Class[]{String.class},
                                                     nbt,"Facing");
                                 Byte transformedFacing = rotation.transformHangingEntity(type,facing);
-                                Object nbtFacing= NMSUtil.createNMSObject("NBTTagByte",new Class[]{byte.class}, 
-                                                            transformedFacing);
+                                Object nbtFacing= NBTTagUtil.createNBTTagByte(transformedFacing);
                                 NMSUtil.invokeNMS("NBTTagCompound","set",
                                                   new Class[]{String.class,NMSUtil.getNMSClass("NBTBase")},
                                                   nbt,"Facing",nbtFacing);
@@ -662,8 +652,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                                                         nbt,"ItemRotation");
 Logger.getGlobal().info("itemFrame: "+newPosition.getX()+" "+newPosition.getY()+" "+newPosition.getZ()+" "+facing +" "+itemRot);
                                     itemRot = rotation.transformItemRotation(facing,itemRot);
-                                    Object nbtItemRot= NMSUtil.createNMSObject("NBTTagByte",new Class[]{byte.class}, 
-                                                                itemRot);
+                                    Object nbtItemRot= NBTTagUtil.createNBTTagByte(itemRot);
                                     NMSUtil.invokeNMS("NBTTagCompound","set",
                                                       new Class[]{String.class,NMSUtil.getNMSClass("NBTBase")},
                                                       nbt,"ItemRotation",nbtItemRot);
@@ -682,12 +671,9 @@ Logger.getGlobal().info("itemFrame: "+newPosition.getX()+" "+newPosition.getY()+
                                     tileZ++;
                                 }
                             }
-                            Object nbtTileX = NMSUtil.createNMSObject("NBTTagInt",new Class[]{int.class}, 
-                                                        tileX);
-                            Object nbtTileY = NMSUtil.createNMSObject("NBTTagInt",new Class[]{int.class}, 
-                                                        tileY);
-                            Object nbtTileZ= NMSUtil.createNMSObject("NBTTagInt",new Class[]{int.class}, 
-                                                        tileZ);
+                            Object nbtTileX = NBTTagUtil.createNBTTagInt(tileX);
+                            Object nbtTileY = NBTTagUtil.createNBTTagInt(tileY);
+                            Object nbtTileZ= NBTTagUtil.createNBTTagInt(tileZ);
                             NMSUtil.invokeNMS("NBTTagCompound","set",
                                               new Class[]{String.class,NMSUtil.getNMSClass("NBTBase")},
                                               nbt,"TileX",nbtTileX);
@@ -700,10 +686,8 @@ Logger.getGlobal().info("itemFrame: "+newPosition.getX()+" "+newPosition.getY()+
                             
                             //give random UUID to entity
                             UUID uuid = UUID.randomUUID();
-                            Object nbtLeast = NMSUtil.createNMSObject("NBTTagLong",new Class[]{long.class}, 
-                                                        uuid.getLeastSignificantBits());
-                            Object nbtMost = NMSUtil.createNMSObject("NBTTagLong",new Class[]{long.class}, 
-                                                        uuid.getMostSignificantBits());
+                            Object nbtLeast = NBTTagUtil.createNBTTagLong(uuid.getLeastSignificantBits());
+                            Object nbtMost = NBTTagUtil.createNBTTagLong(uuid.getMostSignificantBits());
                             NMSUtil.invokeNMS("NBTTagCompound","set",
                                               new Class[]{String.class,NMSUtil.getNMSClass("NBTBase")},
                                               nbt,"UUIDLeast",nbtLeast);

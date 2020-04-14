@@ -151,4 +151,28 @@ public class NBTTagUtil {
         }
         return "";
     }
+    
+    public static Object createNBTTagLong(long value) {
+        return NMSUtil.invokeNMS("NBTTagLong","a",new Class[]{long.class},null,value);
+    }
+    
+    public static Object createNBTTagInt(int value) {
+        return NMSUtil.invokeNMS("NBTTagInt","a",new Class[]{int.class},null,value);
+    }
+    
+    public static Object createNBTTagByte(byte value) {
+        return NMSUtil.invokeNMS("NBTTagByte","a",new Class[]{byte.class},null,value);
+    }
+    
+    public static Object createNBTTagFloat(float value) {
+        return NMSUtil.invokeNMS("NBTTagFloat","a",new Class[]{float.class},null,value);
+    }
+    
+    public static Object createNBTTagDouble(double value) {
+        return NMSUtil.invokeNMS("NBTTagDouble","a",new Class[]{double.class},null,value);
+    }
+    
+    public static Object createNBTCompound() {
+        return NMSUtil.createNMSObject("NBTTagCompound",null);
+    }
 }
