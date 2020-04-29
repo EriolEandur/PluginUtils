@@ -20,9 +20,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -205,5 +207,34 @@ public class NMSUtil {
                                vector.getBlockX(),
                                vector.getBlockY(),
                                vector.getBlockZ());
+    }
+    
+    public static void calcLight(Location loc) {
+        Object blockPosition = NMSUtil.createNMSObject("BlockPosition", new Class[]{int.class,int.class,int.class}, 
+                                                       loc.getBlockX(),loc.getBlockY(), loc.getBlockZ());
+//Logger.getGlobal().info("blocPosition "+blockPosition);
+        Chunk chunk = loc.getChunk();
+        Object nmsChunk = NMSUtil.invokeCraftBukkit("CraftChunk", "getHandle", new Class[0], chunk);
+//Logger.getGlobal().info("nmsChunk"+nmsChunk);
+        Object lightEngine = NMSUtil.invokeNMS("Chunk", "e", new Class[0], nmsChunk);
+//Logger.getGlobal().info("sync "+Bukkit.isPrimaryThread());
+//Logger.getGlobal().info("lightEngine "+lightEngine);
+//Logger.getGlobal().info("getLight: "+NMSUtil.invokeNMS("LightEngine", "b", new Class[]{blockPosition.getClass(),int.class}, lightEngine, blockPosition, 0));
+        NMSUtil.invokeNMS("LightEngine", "a", new Class[]{blockPosition.getClass()}, lightEngine, blockPosition);
+    }
+    
+    public static void calcLight(Chunk chunk, List<Vector> positions) {
+//Logger.getGlobal().info("blocPosition "+blockPosition);
+        Object nmsChunk = NMSUtil.invokeCraftBukkit("CraftChunk", "getHandle", new Class[0], chunk);
+//Logger.getGlobal().info("nmsChunk"+nmsChunk);
+        Object lightEngine = NMSUtil.invokeNMS("Chunk", "e", new Class[0], nmsChunk);
+//Logger.getGlobal().info("sync "+Bukkit.isPrimaryThread());
+//Logger.getGlobal().info("lightEngine "+lightEngine);
+//Logger.getGlobal().info("getLight: "+NMSUtil.invokeNMS("LightEngine", "b", new Class[]{blockPosition.getClass(),int.class}, lightEngine, blockPosition, 0));
+        positions.forEach(pos -> {
+            Object blockPosition = NMSUtil.createNMSObject("BlockPosition", new Class[]{int.class,int.class,int.class}, 
+                                                           chunk.getX() << 4 + pos.getBlockX(), pos.getBlockY(), chunk.getZ() << 4 + pos.getBlockZ());
+            NMSUtil.invokeNMS("LightEngine", "a", new Class[]{blockPosition.getClass()}, lightEngine, blockPosition);
+        });
     }
 }
