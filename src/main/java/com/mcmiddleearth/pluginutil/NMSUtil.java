@@ -224,7 +224,6 @@ public class NMSUtil {
     }
     
     public static void calcLight(Chunk chunk, List<Vector> positions) {
-//Logger.getGlobal().info("blocPosition "+blockPosition);
         Object nmsChunk = NMSUtil.invokeCraftBukkit("CraftChunk", "getHandle", new Class[0], chunk);
 //Logger.getGlobal().info("nmsChunk"+nmsChunk);
         Object lightEngine = NMSUtil.invokeNMS("Chunk", "e", new Class[0], nmsChunk);
@@ -232,8 +231,9 @@ public class NMSUtil {
 //Logger.getGlobal().info("lightEngine "+lightEngine);
 //Logger.getGlobal().info("getLight: "+NMSUtil.invokeNMS("LightEngine", "b", new Class[]{blockPosition.getClass(),int.class}, lightEngine, blockPosition, 0));
         positions.forEach(pos -> {
+//Logger.getGlobal().info("blocPosition "+((chunk.getX()<<4)+pos.getBlockX())+" "+pos.getBlockY()+" "+((chunk.getZ()<<4)+pos.getBlockZ()));
             Object blockPosition = NMSUtil.createNMSObject("BlockPosition", new Class[]{int.class,int.class,int.class}, 
-                                                           chunk.getX() << 4 + pos.getBlockX(), pos.getBlockY(), chunk.getZ() << 4 + pos.getBlockZ());
+                                                           (chunk.getX() << 4) + pos.getBlockX(), pos.getBlockY(), (chunk.getZ() << 4) + pos.getBlockZ());
             NMSUtil.invokeNMS("LightEngine", "a", new Class[]{blockPosition.getClass()}, lightEngine, blockPosition);
         });
     }
