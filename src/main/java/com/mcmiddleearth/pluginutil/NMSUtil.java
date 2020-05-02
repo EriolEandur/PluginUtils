@@ -234,7 +234,7 @@ public class NMSUtil {
 //Logger.getGlobal().info("blocPosition "+((chunk.getX()<<4)+pos.getBlockX())+" "+pos.getBlockY()+" "+((chunk.getZ()<<4)+pos.getBlockZ()));
             Object blockPosition = NMSUtil.createNMSObject("BlockPosition", new Class[]{int.class,int.class,int.class}, 
                                                            (chunk.getX() << 4) + pos.getBlockX(), pos.getBlockY(), (chunk.getZ() << 4) + pos.getBlockZ());
-            NMSUtil.invokeNMS("LightEngine", "a", new Class[]{blockPosition.getClass()}, lightEngine, blockPosition);
+            NMSUtil.invokeNMS("ILightEngine", "a", new Class[]{blockPosition.getClass(),boolean.class}, lightEngine, blockPosition,true);
         });
     }
 }
