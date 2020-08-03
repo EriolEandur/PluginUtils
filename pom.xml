@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mcmiddleearth</groupId>
     <artifactId>PluginUtils</artifactId>
-    <version>1.3.2</version>
+    <version>1.4.0</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -71,8 +71,8 @@
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
             <scope>system</scope>
-            <systemPath>D:\Programme\Minecraft\spigot\1.15.2\cache\patched_1.15.2.jar</systemPath>
-            <version>1.15.2-R1-SNAPSHOT</version>
+            <systemPath>D:\Programme\Minecraft\spigot\1.16.1\spigot-1.16.1.jar</systemPath>
+            <version>1.16.1-R1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
