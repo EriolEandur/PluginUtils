@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
@@ -145,17 +146,21 @@ public class MessageUtil {
     public static void sendRawMessage(Player sender, String message) {
         try {
             Object chatBaseComponent = NMSUtil.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0].getMethod("a", String.class).invoke(null, message);
-            Constructor<?> titleConstructor = NMSUtil.getNMSClass("PacketPlayOutChat").getConstructor(NMSUtil.getNMSClass("IChatBaseComponent"));
-            Object chatPacket = titleConstructor.newInstance(chatBaseComponent);
+            Object chatMessageType = NMSUtil.invokeNMS("ChatMessageType", "a", new Class[]{byte.class}, null, (byte)0);
+            Constructor<?> titleConstructor = NMSUtil.getNMSClass("PacketPlayOutChat").getConstructor(NMSUtil.getNMSClass("IChatBaseComponent"),
+                                                                                                      NMSUtil.getNMSClass("ChatMessageType"),
+                                                                                                      UUID.class);
+            Object chatPacket = titleConstructor.newInstance(chatBaseComponent, chatMessageType, sender.getUniqueId());
             NMSUtil.sendPacket(sender, chatPacket);
             /*((CraftPlayer) sender).getHandle()
-                                  .playerConnection
-                                  .sendPacket(new PacketPlayOutChat(IChatBaseComponent.ChatSerializer
-                                                                                      .a(message)));*/
-        } catch(Error | Exception e ) {
+            .playerConnection
+            .sendPacket(new PacketPlayOutChat(IChatBaseComponent.ChatSerializer
+            .a(message)));*/
+        } catch(Error | Exception ex ) {
+            Logger.getLogger(MessageUtil.class.getName()).log(Level.WARNING, null, ex);
             Logger.getLogger(MessageUtil.class.getName()).log(Level.WARNING, "Error in Minigames plugin while accessing NMS class. This plugin version was not made for your server. Please look for an update. Plugin will use Bukkit.dispatchCommand to send '/tellraw ...' instead of directly sending message packets.");
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "tellraw " + sender.getName()+ " " + message);
-        }    
+        }
     }
         
     public void sendFancyFileListMessage(Player recipient, FancyMessage header,
