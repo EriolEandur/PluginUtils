@@ -175,4 +175,8 @@ public class NBTTagUtil {
     public static Object createNBTCompound() {
         return NMSUtil.createNMSObject("NBTTagCompound",null);
     }
+
+    public static Object createNBTTagIntArray(int[] values) {
+        return NMSUtil.createNMSObject("NBTTagIntArray",new Class[]{int[].class}, (Object) values);
+    }
 }

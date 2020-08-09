@@ -498,10 +498,10 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                         try {
                             Object nmsWorld = NMSUtil.invokeCraftBukkit("CraftWorld", "getHandle", null, location.getWorld());
         //  Logger.getGlobal().info("TileEntity: "+((NBTTagCompound)nbt).asString());
-                            Class[]argsClasses = new Class[]{NMSUtil.getNMSClass("NBTTagCompound")/*,
+                            Class[]argsClasses = new Class[]{NMSUtil.getNMSClass("IBlockData"),NMSUtil.getNMSClass("NBTTagCompound")/*,
                                 NMSUtil.getNMSClass("World")*/};
         //Logger.getGlobal().info("loading nbt TileEntity: "+nbt.toString());
-                            Object entity = NMSUtil.invokeNMS("TileEntity","create",argsClasses, null,nbt/*,nmsWorld*/);
+                            Object entity = NMSUtil.invokeNMS("TileEntity","create",argsClasses, null,null,nbt/*,nmsWorld*/);
                             Object position = NMSUtil.invokeNMS("TileEntity", "getPosition", null, entity);
                             argsClasses = new Class[]{double.class,double.class,double.class};
                             //get position of tile entity and apply transform
@@ -511,8 +511,9 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                             final Vector rotatedVector = rotation.transformVector(NMSUtil.toVector(newPosition),true);
 
                             TileEntity tileEntity = (TileEntity) entity;
-                            if (!(tileEntity instanceof TileEntitySkull)) {
+                            //if (true || !(tileEntity instanceof TileEntitySkull)) {
                                 //set Tile Entity not persistent when called for Player Heads
+                                //EDIT: works fine in 1.16
                                 newPosition = NMSUtil.toBlockPosition(rotatedVector);
                                 NMSUtil.invokeNMS("TileEntity", "setPosition", null, entity, newPosition);
                                 argsClasses = new Class[]{NMSUtil.getNMSClass("BlockPosition"),
@@ -520,7 +521,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                                 NMSUtil.invokeNMS("WorldServer","setTileEntity",argsClasses,nmsWorld,
                                         NMSUtil.invokeNMS("TileEntity","getPosition",null,entity), entity);
                                 
-                            } else {
+                            /*} else {
                                 //custom head
         //Logger.getGlobal().info("Custom head");
                                 TileEntitySkull var6 = (TileEntitySkull)tileEntity;
@@ -556,17 +557,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                                 } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException ex) {
                                     Logger.getLogger(MCMEPlotFormat.class.getName()).log(Level.SEVERE, null, ex);
                                 }
-                                /*new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                }
-                                }.runTaskLater(PluginUtilsPlugin.getInstance(), 10);*/ 
-                                /*new BukkitRunnable() {
-                                    @Override
-                                    public void run() {
-                                    }
-                                }.runTaskLater(PluginUtilsPlugin.getInstance(), 10);*/
-                            }
+                            }*/
                         } catch (ClassNotFoundException | SecurityException | IllegalArgumentException ex) {
                             Logger.getLogger(MCMEPlotFormat.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -686,15 +677,24 @@ Logger.getGlobal().info("itemFrame: "+newPosition.getX()+" "+newPosition.getY()+
                             
                             //give random UUID to entity
                             UUID uuid = UUID.randomUUID();
+                            int[] uuidIntArrayRepresentation = new int[4];
+                            uuidIntArrayRepresentation[0] = (int) (uuid.getMostSignificantBits() >> 32);
+                            uuidIntArrayRepresentation[1] = (int) uuid.getMostSignificantBits();
+                            uuidIntArrayRepresentation[2] = (int) (uuid.getLeastSignificantBits() >> 32);
+                            uuidIntArrayRepresentation[3] = (int) uuid.getLeastSignificantBits();
+                            Object nbtIntArray = NBTTagUtil.createNBTTagIntArray(uuidIntArrayRepresentation);
                             Object nbtLeast = NBTTagUtil.createNBTTagLong(uuid.getLeastSignificantBits());
                             Object nbtMost = NBTTagUtil.createNBTTagLong(uuid.getMostSignificantBits());
                             NMSUtil.invokeNMS("NBTTagCompound","set",
                                               new Class[]{String.class,NMSUtil.getNMSClass("NBTBase")},
                                               nbt,"UUIDLeast",nbtLeast);
                             NMSUtil.invokeNMS("NBTTagCompound","set",
-                                              new Class[]{String.class,NMSUtil.getNMSClass("NBTBase")},
-                                              nbt,"UUIDLeast",nbtMost);
-                            
+                                    new Class[]{String.class,NMSUtil.getNMSClass("NBTBase")},
+                                    nbt,"UUIDLeast",nbtMost);
+                            NMSUtil.invokeNMS("NBTTagCompound","set",
+                                    new Class[]{String.class,NMSUtil.getNMSClass("NBTBase")},
+                                    nbt,"UUID",nbtIntArray);
+
                             //create entity
 //Logger.getGlobal().log(Level.INFO, "************************************");
 //Logger.getGlobal().log(Level.INFO, "NBT: "+nbt.toString());
