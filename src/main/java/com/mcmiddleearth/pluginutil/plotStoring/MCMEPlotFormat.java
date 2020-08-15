@@ -25,10 +25,10 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.Getter;
-import net.minecraft.server.v1_16_R1.GameProfileSerializer;
-import net.minecraft.server.v1_16_R1.NBTTagCompound;
-import net.minecraft.server.v1_16_R1.TileEntity;
-import net.minecraft.server.v1_16_R1.TileEntitySkull;
+import net.minecraft.server.v1_16_R2.GameProfileSerializer;
+import net.minecraft.server.v1_16_R2.NBTTagCompound;
+import net.minecraft.server.v1_16_R2.TileEntity;
+import net.minecraft.server.v1_16_R2.TileEntitySkull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -438,8 +438,8 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                     }
                     for(int y = yStart; y != yEnd; y = y+ yInc) {
                         //Location loc = rotation.rotateVector(new Vector(x, y, z),true).toLocation(location.getWorld());
-//Logger.getGlobal().info("Block: "+location.getWorld().getName()+" "+x+" "+y+" "+z+" "+location.getBlock().getType()+" maxY "+maxY+" cC "+columnCount+" ccM "+columnCountMax);
-//Logger.getGlobal().log(Level.INFO, "Rotated: {0} {1} {2}", new Object[]{location.getBlockX(),location.getBlockY(),location.getBlockZ()});
+Logger.getGlobal().info("Block: "+location.getWorld().getName()+" "+x+" "+y+" "+z+" "+location.getBlock().getType()+" maxY "+maxY+" cC "+columnCount+" ccM "+columnCountMax);
+Logger.getGlobal().log(Level.INFO, "Rotated: {0} {1} {2}", new Object[]{location.getBlockX(),location.getBlockY(),location.getBlockZ()});
                         //if(y<=maxY) {
                         if(columnCount <= columnCountMax) {
                             BlockData data = palette.get(in.readInt());
