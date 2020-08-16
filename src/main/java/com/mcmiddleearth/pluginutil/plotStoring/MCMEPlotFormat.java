@@ -278,7 +278,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
             }
             if(loca!=null) {
                 location = loca.getBlock().getLocation();
-                shift = location.clone().subtract(originalLoc).toVector();
+                shift = location.toVector().subtract(originalLoc.toVector());
             } else {
                 location = originalLoc;
                 shift = new Vector(0,0,0);
