@@ -5,6 +5,7 @@
  */
 package com.mcmiddleearth.pluginutil.message;
 
+import com.google.gson.JsonObject;
 import com.mcmiddleearth.pluginutil.message.config.FancyMessageConfigUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -255,5 +256,18 @@ public final class FancyMessage {
             default:
                 return "reset";
         }
+    }
+
+    public List<String[]> getData() {
+        return data;
+    }
+
+    public boolean isRunDirect() {
+        return runDirect;
+    }
+
+    public JsonObject parseJson() {
+        return JsonMessageParser.parse(this);
+
     }
 }
