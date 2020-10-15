@@ -514,13 +514,17 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                             //if (true || !(tileEntity instanceof TileEntitySkull)) {
                                 //set Tile Entity not persistent when called for Player Heads
                                 //EDIT: works fine in 1.16
-                                newPosition = NMSUtil.toBlockPosition(rotatedVector);
-                                NMSUtil.invokeNMS("TileEntity", "setPosition", null, entity, newPosition);
-                                argsClasses = new Class[]{NMSUtil.getNMSClass("BlockPosition"),
+                            newPosition = NMSUtil.toBlockPosition(rotatedVector);
+                            NMSUtil.invokeNMS("TileEntity", "setPosition", null, entity, newPosition);
+                            newPosition = NMSUtil.invokeNMS("TileEntity","getPosition",null,entity);
+                            argsClasses = new Class[]{NMSUtil.getNMSClass("BlockPosition")};
+                            NMSUtil.invokeNMS("WorldServer","removeTileEntity",argsClasses,nmsWorld, newPosition);
+
+                            argsClasses = new Class[]{NMSUtil.getNMSClass("BlockPosition"),
                                     NMSUtil.getNMSClass("TileEntity")};
-                                NMSUtil.invokeNMS("WorldServer","setTileEntity",argsClasses,nmsWorld,
-                                        NMSUtil.invokeNMS("TileEntity","getPosition",null,entity), entity);
-                                
+                            NMSUtil.invokeNMS("WorldServer","setTileEntity",argsClasses,nmsWorld,
+                                    newPosition, entity);
+
                             /*} else {
                                 //custom head
         //Logger.getGlobal().info("Custom head");
