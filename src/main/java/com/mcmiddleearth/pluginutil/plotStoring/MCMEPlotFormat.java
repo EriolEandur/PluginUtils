@@ -438,8 +438,8 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                     }
                     for(int y = yStart; y != yEnd; y = y+ yInc) {
                         //Location loc = rotation.rotateVector(new Vector(x, y, z),true).toLocation(location.getWorld());
-Logger.getGlobal().info("Block: "+location.getWorld().getName()+" "+x+" "+y+" "+z+" "+location.getBlock().getType()+" maxY "+maxY+" cC "+columnCount+" ccM "+columnCountMax);
-Logger.getGlobal().log(Level.INFO, "Rotated: {0} {1} {2}", new Object[]{location.getBlockX(),location.getBlockY(),location.getBlockZ()});
+//Logger.getGlobal().info("Block: "+location.getWorld().getName()+" "+x+" "+y+" "+z+" "+location.getBlock().getType()+" maxY "+maxY+" cC "+columnCount+" ccM "+columnCountMax);
+//Logger.getGlobal().log(Level.INFO, "Rotated: {0} {1} {2}", new Object[]{location.getBlockX(),location.getBlockY(),location.getBlockZ()});
                         //if(y<=maxY) {
                         if(columnCount <= columnCountMax) {
                             BlockData data = palette.get(in.readInt());
@@ -641,7 +641,7 @@ Logger.getGlobal().log(Level.INFO, "Rotated: {0} {1} {2}", new Object[]{location
                                     Byte itemRot = (Byte)  NMSUtil.invokeNMS("NBTTagCompound","getByte",
                                                         new Class[]{String.class},
                                                         nbt,"ItemRotation");
-Logger.getGlobal().info("itemFrame: "+newPosition.getX()+" "+newPosition.getY()+" "+newPosition.getZ()+" "+facing +" "+itemRot);
+//Logger.getGlobal().info("itemFrame: "+newPosition.getX()+" "+newPosition.getY()+" "+newPosition.getZ()+" "+facing +" "+itemRot);
                                     itemRot = rotation.transformItemRotation(facing,itemRot);
                                     Object nbtItemRot= NBTTagUtil.createNBTTagByte(itemRot);
                                     NMSUtil.invokeNMS("NBTTagCompound","set",
