@@ -35,7 +35,7 @@ import org.bukkit.util.Vector;
  * @author Eriol_Eandur
  */
 public class NMSUtil {
-    
+
     public static Class<?> getNMSClass(String name) throws ClassNotFoundException {
         String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         return Class.forName("net.minecraft.server." + version + "." + name);
