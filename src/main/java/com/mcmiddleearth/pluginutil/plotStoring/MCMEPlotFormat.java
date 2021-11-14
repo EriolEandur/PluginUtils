@@ -502,29 +502,32 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                                 NMSUtil.getNMSClass("World")*/};
         //Logger.getGlobal().info("loading nbt TileEntity: "+nbt.toString());
                             Object entity = NMSUtil.invokeNMS("TileEntity","create",argsClasses, null,null,nbt/*,nmsWorld*/);
-                            Object position = NMSUtil.invokeNMS("TileEntity", "getPosition", null, entity);
-                            argsClasses = new Class[]{double.class,double.class,double.class};
-                            //get position of tile entity and apply transform
-                            Object newPosition = NMSUtil.invokeNMS("BlockPosition", "a", argsClasses, position, shift.getBlockX(),
-                                    shift.getBlockY(),
-                                    shift.getBlockZ());
-                            final Vector rotatedVector = rotation.transformVector(NMSUtil.toVector(newPosition),true);
+                            if(entity!=null) {
+                                Object position = NMSUtil.invokeNMS("TileEntity", "getPosition", null, entity);
+                                argsClasses = new Class[]{double.class, double.class, double.class};
+                                //get position of tile entity and apply transform
+                                Object newPosition = NMSUtil.invokeNMS("BlockPosition", "a", argsClasses, position, shift.getBlockX(),
+                                        shift.getBlockY(),
+                                        shift.getBlockZ());
+                                final Vector rotatedVector = rotation.transformVector(NMSUtil.toVector(newPosition), true);
 
-                            TileEntity tileEntity = (TileEntity) entity;
-                            //if (true || !(tileEntity instanceof TileEntitySkull)) {
+                                TileEntity tileEntity = (TileEntity) entity;
+                                //if (true || !(tileEntity instanceof TileEntitySkull)) {
                                 //set Tile Entity not persistent when called for Player Heads
                                 //EDIT: works fine in 1.16
-                            newPosition = NMSUtil.toBlockPosition(rotatedVector);
-                            NMSUtil.invokeNMS("TileEntity", "setPosition", null, entity, newPosition);
-                            newPosition = NMSUtil.invokeNMS("TileEntity","getPosition",null,entity);
-                            argsClasses = new Class[]{NMSUtil.getNMSClass("BlockPosition")};
-                            NMSUtil.invokeNMS("WorldServer","removeTileEntity",argsClasses,nmsWorld, newPosition);
+                                newPosition = NMSUtil.toBlockPosition(rotatedVector);
+                                NMSUtil.invokeNMS("TileEntity", "setPosition", null, entity, newPosition);
+                                newPosition = NMSUtil.invokeNMS("TileEntity", "getPosition", null, entity);
+                                argsClasses = new Class[]{NMSUtil.getNMSClass("BlockPosition")};
+                                NMSUtil.invokeNMS("WorldServer", "removeTileEntity", argsClasses, nmsWorld, newPosition);
 
-                            argsClasses = new Class[]{NMSUtil.getNMSClass("BlockPosition"),
-                                    NMSUtil.getNMSClass("TileEntity")};
-                            NMSUtil.invokeNMS("WorldServer","setTileEntity",argsClasses,nmsWorld,
-                                    newPosition, entity);
-
+                                argsClasses = new Class[]{NMSUtil.getNMSClass("BlockPosition"),
+                                        NMSUtil.getNMSClass("TileEntity")};
+                                NMSUtil.invokeNMS("WorldServer", "setTileEntity", argsClasses, nmsWorld,
+                                        newPosition, entity);
+                            } else {
+                                Logger.getLogger(MCMEPlotFormat.class.getSimpleName()).info("Warning! Tile entity skipped!");
+                            }
                             /*} else {
                                 //custom head
         //Logger.getGlobal().info("Custom head");
@@ -562,7 +565,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                                     Logger.getLogger(MCMEPlotFormat.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                             }*/
-                        } catch (ClassNotFoundException | SecurityException | IllegalArgumentException ex) {
+                        } catch (ClassNotFoundException | SecurityException | IllegalArgumentException|NullPointerException ex) {
                             Logger.getLogger(MCMEPlotFormat.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
