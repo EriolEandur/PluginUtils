@@ -11,8 +11,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <build>
-    <!-- <sourceDirectory>${project.build.directory}/generated-sources/delombok</sourceDirectory> -->
-       
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -36,53 +34,27 @@
     </build>
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <id>sk89q-repo</id>
+            <url>https://maven.enginehub.org/repo/</url>
         </repository>
         <repository>
             <id>dynmap-repo</id>
-            <url>http://repo.mikeprimm.com/</url>
+            <url>https://repo.mikeprimm.com</url>
         </repository>
-        <!--<repository>
-            <id>fawe-repo</id>
-            <url>http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/</url>
-        </repository>-->
-        <repository>
-            <id>papermc</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
-        </repository>
-        <repository>
-            <id>sk89q-snapshots</id>
-            <url>http://maven.sk89q.com/artifactory/repo</url>
-            <releases>
-              <enabled>true</enabled> <!-- releases enabled: this specific repository also hosts release versions -->
-            </releases>
-            <snapshots>
-              <enabled>true</enabled> <!-- snapshots enabled: we declare a SNAPSHOT repository because we need to download a SNAPSHOT dependency -->
-            </snapshots>
-          </repository>
     </repositories>
     <dependencies>
-        <!--Spigot API-->
-        <!--Bukkit API-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>18.0</version>
+            <version>31.0.1-jre</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.16.3-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--<dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
@@ -90,17 +62,6 @@
             <systemPath>D:/Programme/Minecraft/spigot/1.17.1/cache/patched_1.17.1.jar</systemPath>
             <version>1.17.1-R1-SNAPSHOT</version>
         </dependency>
-        <!--<dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.16.22</version>
-            <scope>provided</scope>
-        </dependency>-->
-        <!--<dependency>
-            <groupId>com.boydti</groupId>
-            <artifactId>fawe-api</artifactId>
-            <version>latest</version>
-        </dependency>-->
         <dependency>
           <groupId>com.sk89q.worldedit</groupId>
           <artifactId>worldedit-core</artifactId>
@@ -121,12 +82,16 @@
                     <groupId>org.spigot</groupId>
                     <artifactId>spigot</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.bstats</groupId>
+                    <artifactId>bstats-bukkit</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>us.dynmap</groupId>
             <artifactId>dynmap-api</artifactId>
-            <version>2.4-SNAPSHOT</version>
+            <version>3.3-beta-5</version>
         </dependency>
     </dependencies>
     <name>Plugin-Utils</name>
