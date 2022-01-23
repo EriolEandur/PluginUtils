@@ -16,7 +16,6 @@
  */
 package com.mcmiddleearth.pluginutil.region;
 
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -28,7 +27,6 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public abstract class Region{
     
-    @Getter
     protected Location location;
     
     protected Region(Location location) {
@@ -43,7 +41,11 @@ public abstract class Region{
                                     (float)config.getDouble("locationYaw"),
                                     (float)config.getDouble("locationPitch"));
     }
-    
+
+    public Location getLocation() {
+        return location;
+    }
+
     public void save(ConfigurationSection config) {
         config.set("world", location.getWorld().getName());
         config.set("locationX", location.getBlockX());

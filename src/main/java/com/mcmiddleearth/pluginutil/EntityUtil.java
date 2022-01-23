@@ -16,35 +16,22 @@
  */
 package com.mcmiddleearth.pluginutil;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.Logger;
-import lombok.Setter;
-import org.bukkit.Art;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Rotation;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Painting;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  *
@@ -253,9 +240,12 @@ public class EntityUtil {
     
     private static class CreateItemFrameLaterTask extends BukkitRunnable {
         
-        @Setter
         BukkitRunnable task;
-        
+
+        public void setTask(BukkitRunnable task) {
+            this.task = task;
+        }
+
         int tries = 0;
 
         Location fLoc;
@@ -330,9 +320,12 @@ public class EntityUtil {
     
     private static class CreatePaintingLaterTask extends BukkitRunnable {
         
-        @Setter
         BukkitRunnable task;
-        
+
+        public void setTask(BukkitRunnable task) {
+            this.task = task;
+        }
+
         int tries = 0;
 
         Location fLoc;

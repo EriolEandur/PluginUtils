@@ -16,20 +16,24 @@
  */
 package com.mcmiddleearth.pluginutil.message.config;
 
-import lombok.Getter;
-
 /**
  *
  * @author Eriol_Eandur
  */
 public class MessageToken {
     
-    @Getter
     private final MessageTokenType type;
-    
-    @Getter
+
+    public MessageTokenType getType() {
+        return type;
+    }
+
     private String text="";
-    
+
+    public String getText() {
+        return text;
+    }
+
     public MessageToken(MessageTokenType type) {
         this.type = type;
     }

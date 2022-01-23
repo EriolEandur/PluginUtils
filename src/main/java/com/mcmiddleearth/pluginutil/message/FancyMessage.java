@@ -9,7 +9,6 @@ import com.google.gson.JsonObject;
 import com.mcmiddleearth.pluginutil.message.config.FancyMessageConfigUtil;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -26,10 +25,8 @@ public final class FancyMessage {
 
     private boolean runDirect = false;
     
-    @Getter
     private ChatColor baseColor;
     
-    @Getter
     private MessageUtil messageUtil;
 
     /**
@@ -74,6 +71,14 @@ public final class FancyMessage {
     public FancyMessage(MessageType messageType, MessageUtil messageUtil, ChatColor baseColor) {
         this(messageType, messageUtil);
         this.baseColor = baseColor;
+    }
+
+    public ChatColor getBaseColor() {
+        return baseColor;
+    }
+
+    public MessageUtil getMessageUtil() {
+        return messageUtil;
     }
 
     /**

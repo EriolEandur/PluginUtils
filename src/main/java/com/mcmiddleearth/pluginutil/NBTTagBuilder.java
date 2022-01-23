@@ -31,7 +31,7 @@ public class NBTTagBuilder {
     }
     
     public final NBTTagBuilder reset() throws ClassNotFoundException, NoSuchMethodException, InstantiationException, InvocationTargetException, IllegalAccessException {
-        tag = NMSUtil.getNMSClass("NBTTagCompound").getConstructor().newInstance();
+        tag = NMSUtil.getNMSClass("nbt.NBTTagCompound").getConstructor().newInstance();
         return this;
     }
     
@@ -72,26 +72,26 @@ public class NBTTagBuilder {
     }
     
     public NBTTagBuilder setTag(String key, Object newTag) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
-        tag.getClass().getMethod("set", String.class, NMSUtil.getNMSClass("NBTBase"))
+        tag.getClass().getMethod("set", String.class, NMSUtil.getNMSClass("nbt.NBTBase"))
                       .invoke(tag, key, newTag);
         return this;
     }
     
     public NBTTagBuilder setTagList(String key, Object... tags) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, InstantiationException {
-        Object list = NMSUtil.getNMSClass("NBTTagList").getConstructor().newInstance();
+        Object list = NMSUtil.getNMSClass("nbt.NBTTagList").getConstructor().newInstance();
         for(Object newTag: tags) {
-            list.getClass().getMethod("add", NMSUtil.getNMSClass("NBTBase")).invoke(list, newTag);
+            list.getClass().getMethod("add", NMSUtil.getNMSClass("nbt.NBTBase")).invoke(list, newTag);
         }
         setTag(key, list);
         return this;
     }
     
     public NBTTagBuilder setFloatList(String key, Float... elements) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, InstantiationException {
-        Object list = NMSUtil.getNMSClass("NBTTagList").getConstructor().newInstance();
+        Object list = NMSUtil.getNMSClass("nbt.NBTTagList").getConstructor().newInstance();
         for(Float element: elements) {
-            Object newTag = NMSUtil.getNMSClass("NBTTagFloat").getConstructor(float.class)
+            Object newTag = NMSUtil.getNMSClass("nbt.NBTTagFloat").getConstructor(float.class)
                                                               .newInstance(element);
-            list.getClass().getMethod("add", NMSUtil.getNMSClass("NBTBase")).invoke(list, newTag);
+            list.getClass().getMethod("add", NMSUtil.getNMSClass("nbt.NBTBase")).invoke(list, newTag);
         }
         setTag(key, list);
         return this;

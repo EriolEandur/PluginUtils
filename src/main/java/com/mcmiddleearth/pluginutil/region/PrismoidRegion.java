@@ -20,8 +20,6 @@ package com.mcmiddleearth.pluginutil.region;
 import com.sk89q.worldedit.math.BlockVector2;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.util.Vector;
@@ -40,8 +38,6 @@ public class PrismoidRegion extends Region{
     
     private int minX, maxX, minZ, maxZ;
     
-    @Getter
-    @Setter
     private int minY, maxY;
     
     public PrismoidRegion(Location location, com.sk89q.worldedit.regions.Polygonal2DRegion weRegion) {
@@ -75,7 +71,23 @@ public class PrismoidRegion extends Region{
     public Integer[] getZPoints() {
         return zPoints.toArray(new Integer[0]);
     }
-    
+
+    public int getMinY() {
+        return minY;
+    }
+
+    public void setMinY(int minY) {
+        this.minY = minY;
+    }
+
+    public int getMaxY() {
+        return maxY;
+    }
+
+    public void setMaxY(int maxY) {
+        this.maxY = maxY;
+    }
+
     private void calculateBorders() {
         int j=xPoints.size()-1;
         gradients.clear();

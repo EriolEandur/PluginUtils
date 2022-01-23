@@ -16,8 +16,6 @@
  */
 package com.mcmiddleearth.pluginutil.region;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -27,15 +25,21 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class SphericalRegion extends Region{
  
-    @Getter
-    @Setter
     private int radius;
     
     public SphericalRegion(Location location, int radius) {
         super(location);
         this.radius = radius;
     }
-    
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
     @Override
     public boolean isInside(Location loc) {
         return isNear(loc,0);

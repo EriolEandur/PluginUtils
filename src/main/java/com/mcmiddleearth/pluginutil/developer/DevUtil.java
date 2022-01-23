@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -35,20 +33,38 @@ public class DevUtil {
     
     private final List<UUID> developer = new ArrayList<UUID>();
     
-    @Setter
     private String msgColor = ""+ChatColor.GOLD;
-    
-    @Setter
+
+    public void setMsgColor(String msgColor) {
+        this.msgColor = msgColor;
+    }
+
     private String plugin = "[Debug] ";
-    
-    @Getter
-    @Setter
+
+    public void setPlugin(String plugin) {
+        this.plugin = plugin;
+    }
+
     private boolean consoleOutput = false;
 
-    @Getter
-    @Setter
+    public boolean isConsoleOutput() {
+        return consoleOutput;
+    }
+
+    public void setConsoleOutput(boolean consoleOutput) {
+        this.consoleOutput = consoleOutput;
+    }
+
     private int level = 1;
-    
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
     public void log(String message) {
         log(1,message);
     }
