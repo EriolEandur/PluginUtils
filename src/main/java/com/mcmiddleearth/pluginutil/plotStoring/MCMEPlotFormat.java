@@ -178,8 +178,8 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                 Object nmsEntity = NMSUtil.invokeCraftBukkit("entity.CraftEntity", "getHandle",
                                                              null, entity);
                 NMSUtil.invokeNMS("nbt.NBTTagCompound","setString",null, nbt,"id",
-                                  NMSUtil.invokeNMS("world.entity.Entity","getSaveID",null, nmsEntity));
-                nbt = NMSUtil.invokeNMS("world.entity.Entity","save",null, nmsEntity,nbt);
+                                  NMSUtil.invokeNMS("world.entity.Entity","bk",null, nmsEntity));
+                nbt = NMSUtil.invokeNMS("world.entity.Entity","f",null, nmsEntity,nbt);
                 Class[] argsClasses = new Class[]{NMSUtil.getNMSClass("nbt.NBTTagCompound"),DataOutput.class};
                 NMSUtil.invokeNMS("nbt.NBTCompressedStreamTools","a",argsClasses,null,nbt,(DataOutput)out);
             }

@@ -28,7 +28,7 @@ public class NBTTagUtil {
     public static boolean hasKey(Object tag, String key) {
         try {
             if(NMSUtil.getNMSClass("nbt.NBTTagCompound").isInstance(tag)) {
-                return (Boolean) NMSUtil.invokeNMS("nbt.NBTTagCompound","hasKey",
+                return (Boolean) NMSUtil.invokeNMS("nbt.NBTTagCompound","e",
                                                    new Class[]{String.class},tag,key);
             }
         } catch (ClassNotFoundException ex) {

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mcmiddleearth</groupId>
     <artifactId>PluginUtils</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.6.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,15 +52,15 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
             <scope>system</scope>
-            <systemPath>D:/Programme/Minecraft/spigot/1.17.1/cache/patched_1.17.1.jar</systemPath>
-            <version>1.17.1-R1-SNAPSHOT</version>
+            <systemPath>D:/Programme/Minecraft/spigot/1.18.1/versions/1.18.1/paper-1.18.1.jar</systemPath>
+            <version>1.18.1-R1-SNAPSHOT</version>
         </dependency>
         <dependency>
           <groupId>com.sk89q.worldedit</groupId>
@@ -87,6 +87,12 @@
                     <artifactId>bstats-bukkit</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>1.5.25</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>us.dynmap</groupId>
