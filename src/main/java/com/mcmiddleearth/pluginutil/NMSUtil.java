@@ -49,7 +49,7 @@ public class NMSUtil {
     public static void sendPacket(Player player, Object packet) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException, ClassNotFoundException {
         Object handle = player.getClass().getMethod("getHandle").invoke(player);
         Object playerConnection = handle.getClass().getField("b").get(handle);
-        playerConnection.getClass().getMethod("sendPacket", getNMSClass("network.protocol.Packet")).invoke(playerConnection, packet);
+        playerConnection.getClass().getMethod("a"/*"sendPacket"*/, getNMSClass("network.protocol.Packet")).invoke(playerConnection, packet);
     }
 
     public static Object getTileEntity(Block block) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, InstantiationException {
@@ -196,9 +196,9 @@ public class NMSUtil {
     }
     
     public static Vector toVector(Object blockPosition) {
-        return new Vector((int) invokeNMS("core.BaseBlockPosition","getX",null,blockPosition),
-                          (int) invokeNMS("core.BaseBlockPosition","getY",null,blockPosition),
-                          (int) invokeNMS("core.BaseBlockPosition","getZ",null,blockPosition));
+        return new Vector((int) invokeNMS("core.BaseBlockPosition","u"/*"getX"*/,null,blockPosition),
+                          (int) invokeNMS("core.BaseBlockPosition","v"/*"getY"*/,null,blockPosition),
+                          (int) invokeNMS("core.BaseBlockPosition","w"/*getZ"*/,null,blockPosition));
     }                       
     
     public static Object toBlockPosition(Vector vector) {
