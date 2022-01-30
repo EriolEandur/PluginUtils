@@ -321,14 +321,17 @@ public class MCMEPlotFormat implements PlotStorageFormat {
         }
         int biomePaletteLength = in.readInt();
         Map<Integer,Biome> biomePalette = new HashMap<>(biomePaletteLength);
-        for(int i = 0; i<biomePaletteLength; i++) {
+        for (int i = 0; i < biomePaletteLength; i++) {
             int dataLength = in.readInt();
             byte[] byteData = new byte[dataLength];
             in.readFully(byteData);
-            String biomeName = new String(byteData,Charset.forName("UTF-8"));
-//Logger.getGlobal().info("Biome name: "+biomeName);
-            Biome biome = Biome.valueOf(biomeName);
-//Logger.getGlobal().info("Biome palette entry: "+i+" "+biome);
+            String biomeName = new String(byteData, Charset.forName("UTF-8"));
+            //Logger.getGlobal().info("Biome name: "+biomeName);
+            Biome biome = Biome.PLAINS;
+            try {
+                biome = Biome.valueOf(biomeName);
+            } catch (IllegalArgumentException ignore) {}
+            //Logger.getGlobal().info("Biome palette entry: "+i+" "+biome);
             biomePalette.put(i, biome);
         }
 //log("location",location);
