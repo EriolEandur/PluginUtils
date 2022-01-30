@@ -216,7 +216,10 @@ public class NMSUtil {
         Chunk chunk = loc.getChunk();
         Object nmsChunk = NMSUtil.invokeCraftBukkit("CraftChunk", "getHandle", new Class[0], chunk);
 //Logger.getGlobal().info("nmsChunk"+nmsChunk);
-        Object lightEngine = NMSUtil.invokeNMS("world.level.chunk.Chunk", "e", new Class[0], nmsChunk);
+        Object worldServer = NMSUtil.getNMSField("world.level.chunk.Chunk","q", nmsChunk);
+
+        Object lightEngine = NMSUtil.invokeNMS("world.level.World", "l_", new Class[0], worldServer);
+        //Object lightEngine = NMSUtil.invokeNMS("world.level.chunk.Chunk", "e", new Class[0], nmsChunk);
 //Logger.getGlobal().info("sync "+Bukkit.isPrimaryThread());
 //Logger.getGlobal().info("lightEngine "+lightEngine);
 //Logger.getGlobal().info("getLight: "+NMSUtil.invokeNMS("LightEngine", "b", new Class[]{blockPosition.getClass(),int.class}, lightEngine, blockPosition, 0));
@@ -226,7 +229,10 @@ public class NMSUtil {
     public static void calcLight(Chunk chunk, List<Vector> positions) {
         Object nmsChunk = NMSUtil.invokeCraftBukkit("CraftChunk", "getHandle", new Class[0], chunk);
 //Logger.getGlobal().info("nmsChunk"+nmsChunk);
-        Object lightEngine = NMSUtil.invokeNMS("world.level.chunk.Chunk", "e", new Class[0], nmsChunk);
+        Object worldServer = NMSUtil.getNMSField("world.level.chunk.Chunk","q", nmsChunk);
+
+        Object lightEngine = NMSUtil.invokeNMS("world.level.World", "l_", new Class[0], worldServer);
+        //Object lightEngine = NMSUtil.invokeNMS("world.level.chunk.Chunk", "e", new Class[0], nmsChunk);
 //Logger.getGlobal().info("sync "+Bukkit.isPrimaryThread());
 //Logger.getGlobal().info("lightEngine "+lightEngine);
 //Logger.getGlobal().info("getLight: "+NMSUtil.invokeNMS("LightEngine", "b", new Class[]{blockPosition.getClass(),int.class}, lightEngine, blockPosition, 0));
