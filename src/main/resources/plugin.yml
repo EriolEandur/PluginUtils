@@ -3,7 +3,7 @@ main: com.mcmiddleearth.pluginutil.PluginUtilsPlugin
 version: ${project.version}
 author: Eriol_Eandur
 load: STARTUP
-softdepend: [ProtocolLib,Essentials,WorldEdit]
+softdepend: [ProtocolLib,Essentials,WorldEdit,Dynmap]
 api-version: 1.18
 
 commands:
