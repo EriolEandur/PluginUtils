@@ -40,7 +40,7 @@ public class NBTTagUtil {
     public static Object getCompound(Object tag, String key) {
         try {
             if(NMSUtil.getNMSClass("nbt.NBTTagCompound").isInstance(tag)) {
-                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","getCompound",
+                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","p"/*getCompound*/,
                                                    new Class[]{String.class},tag,key);
                 return NMSUtil.getNMSClass("nbt.NBTTagCompound").isInstance(result)?result:null;
             }
@@ -53,7 +53,7 @@ public class NBTTagUtil {
     public static Object getTagList(Object tag, String key) {
         try {
             if(NMSUtil.getNMSClass("nbt.NBTTagCompound").isInstance(tag)) {
-                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","get",
+                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","c"/*get*/,
                                                    new Class[]{String.class},tag,key);
                 return NMSUtil.getNMSClass("nbt.NBTTagList").isInstance(result)?result:null;
             }
@@ -66,7 +66,7 @@ public class NBTTagUtil {
     public static Integer getInt(Object tag, String key) {
         try {
             if(NMSUtil.getNMSClass("nbt.NBTTagCompound").isInstance(tag)) {
-                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","getInt",
+                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","h"/*getInt*/,
                                                    new Class[]{String.class},tag,key);
                 return result instanceof Integer?(Integer)result:null;
             }
@@ -79,7 +79,7 @@ public class NBTTagUtil {
     public static Short getShort(Object tag, String key) {
         try {
             if(NMSUtil.getNMSClass("nbt.NBTTagCompound").isInstance(tag)) {
-                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","getShort",
+                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","g"/*getShort*/,
                                                    new Class[]{String.class},tag,key);
                 return result instanceof Short?(Short)result:null;
             }
@@ -92,7 +92,7 @@ public class NBTTagUtil {
     public static Long getLong(Object tag, String key) {
         try {
             if(NMSUtil.getNMSClass("nbt.NBTTagCompound").isInstance(tag)) {
-                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","getLong",
+                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","i"/*getLong*/,
                                                    new Class[]{String.class},tag,key);
                 return result instanceof Long?(Long)result:null;
             }
@@ -105,7 +105,7 @@ public class NBTTagUtil {
     public static String getString(Object tag, String key) {
         try {
             if(NMSUtil.getNMSClass("nbt.NBTTagCompound").isInstance(tag)) {
-                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","getString",
+                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","l"/*getString*/,
                                                    new Class[]{String.class},tag,key);
                 return result instanceof String?(String)result:null;
             }
@@ -118,7 +118,7 @@ public class NBTTagUtil {
     public static Float getFloat(Object tag, String key) {
         try {
             if(NMSUtil.getNMSClass("nbt.NBTTagCompound").isInstance(tag)) {
-                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","getFloat",
+                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","j"/*getFloat*/,
                                                    new Class[]{String.class},tag,key);
                 return result instanceof Float?(Float)result:null;
             }
@@ -131,7 +131,7 @@ public class NBTTagUtil {
     public static Double getDouble(Object tag, String key) {
         try {
             if(NMSUtil.getNMSClass("nbt.NBTTagCompound").isInstance(tag)) {
-                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","getDouble",
+                Object result =  NMSUtil.invokeNMS("nbt.NBTTagCompound","k"/*getDouble*/,
                                                    new Class[]{String.class},tag,key);
                 return result instanceof Double?(Double)result:null;
             }
@@ -144,7 +144,7 @@ public class NBTTagUtil {
     public static String asString(Object tag) {
         try {
             if(NMSUtil.getNMSClass("nbt.NBTBase").isInstance(tag)) {
-                return (String) NMSUtil.invokeNMS("nbt.NBTBase","asString",new Class[]{},tag);
+                return (String) NMSUtil.invokeNMS("nbt.NBTBase","toString",new Class[]{},tag);
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(NBTTagUtil.class.getName()).log(Level.SEVERE, null, ex);
