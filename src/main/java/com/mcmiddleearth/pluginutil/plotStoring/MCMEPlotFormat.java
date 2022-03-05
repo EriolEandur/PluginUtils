@@ -21,6 +21,7 @@ import org.bukkit.util.Vector;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -237,10 +238,16 @@ public class MCMEPlotFormat implements PlotStorageFormat {
                      Vector size, DataInputStream in) throws IOException, InvalidRestoreDataException{
         load(loca, rotations, flip, true, true, size, in);
     }
-    
-    public void load(Location loca, final int rotations, boolean[] flip, 
+
+    public void load(Location loca, final int rotations, boolean[] flip,
                      final boolean withAir, final boolean withBiome,
                      Vector size, DataInputStream in) throws IOException, InvalidRestoreDataException{
+        load(loca, rotations,flip,withAir,withBiome,size, false, in);
+    }
+
+    public void load(Location loca, final int rotations, boolean[] flip,
+    final boolean withAir, final boolean withBiome,
+    Vector size, boolean legacyBlocks, DataInputStream in) throws IOException, InvalidRestoreDataException{
         //try {
         resultSize = null;
         int version = in.readInt();
@@ -315,8 +322,14 @@ public class MCMEPlotFormat implements PlotStorageFormat {
             int dataLength = in.readInt();
             byte[] byteData = new byte[dataLength];
             in.readFully(byteData);
+            String blockDataString;
+            if(legacyBlocks) {
+                blockDataString = blockMappings(new String(byteData, StandardCharsets.UTF_8));
+            } else {
+                blockDataString = new String(byteData, StandardCharsets.UTF_8);
+            }
             BlockData blockData = Bukkit.getServer()
-                                        .createBlockData(new String(byteData,Charset.forName("UTF-8")));
+                                        .createBlockData(blockDataString);
             palette.put(i, rotation.transformBlockData(blockData));
         }
         int biomePaletteLength = in.readInt();
@@ -684,6 +697,13 @@ public class MCMEPlotFormat implements PlotStorageFormat {
     }
     private void log(String name, Vector loc) {
         Logger.getGlobal().info(name+" "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ());
+    }
+
+    private String blockMappings(String blockData) {
+        if(blockData.contains("level")) {
+            blockData = blockData.replace("CAULDRON","WATER_CAULDRON");
+        }
+        return blockData;
     }
 
 }
