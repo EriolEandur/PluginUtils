@@ -701,7 +701,7 @@ public class MCMEPlotFormat implements PlotStorageFormat {
 
     private String blockMappings(String blockData) {
         if(blockData.contains("level")) {
-            blockData = blockData.replace("CAULDRON","WATER_CAULDRON");
+            blockData = blockData.replace("cauldron","water_cauldron");
         }
         return blockData;
     }
