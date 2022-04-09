@@ -121,26 +121,27 @@ public class TitleUtil {
         if (title != null) {
             title = ChatColor.translateAlternateColorCodes('&', title);
             title = title.replaceAll("%player%", player.getDisplayName());
-            Object enumTitle = NMSUtil.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TITLE").get(null);
+            /*Object enumTitle = NMSUtil.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TITLE").get(null);
             Object chatTitle = NMSUtil.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0].getMethod("a", String.class).invoke(null, "{\"text\":\"" + title + "\"}");
             Constructor<?> titleConstructor = NMSUtil.getNMSClass("PacketPlayOutTitle").getConstructor(NMSUtil.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0], NMSUtil.getNMSClass("IChatBaseComponent"), int.class, int.class, int.class);
             Object titlePacket = titleConstructor.newInstance(enumTitle, chatTitle, fadeIn, stay, fadeOut);
-            NMSUtil.sendPacket(player, titlePacket);
+            NMSUtil.sendPacket(player, titlePacket);*/
         }
 
         if (subtitle != null) {
             subtitle = ChatColor.translateAlternateColorCodes('&', subtitle);
             subtitle = subtitle.replaceAll("%player%", player.getDisplayName());
-            Object enumSubtitle = NMSUtil.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("SUBTITLE").get(null);
+            /*Object enumSubtitle = NMSUtil.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("SUBTITLE").get(null);
             Object chatSubtitle = NMSUtil.getNMSClass("IChatBaseComponent").getDeclaredClasses()[0].getMethod("a", String.class).invoke(null, "{\"text\":\"" + subtitle + "\"}");
             Constructor<?> subtitleConstructor = NMSUtil.getNMSClass("PacketPlayOutTitle").getConstructor(NMSUtil.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0], NMSUtil.getNMSClass("IChatBaseComponent"), int.class, int.class, int.class);
             Object subtitlePacket = subtitleConstructor.newInstance(enumSubtitle, chatSubtitle, fadeIn, stay, fadeOut);
-            NMSUtil.sendPacket(player, subtitlePacket);
+            NMSUtil.sendPacket(player, subtitlePacket);*/
         }
-        Object enumTimes = NMSUtil.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TIMES").get(null);
+        /*Object enumTimes = NMSUtil.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0].getField("TIMES").get(null);
         Constructor<?> titleConstructor = NMSUtil.getNMSClass("PacketPlayOutTitle").getConstructor(NMSUtil.getNMSClass("PacketPlayOutTitle").getDeclaredClasses()[0], NMSUtil.getNMSClass("IChatBaseComponent"), int.class, int.class, int.class);
         Object titlePacket = titleConstructor.newInstance(enumTimes, null, fadeIn, stay, fadeOut);
-        NMSUtil.sendPacket(player, titlePacket);
+        NMSUtil.sendPacket(player, titlePacket);*/
+        player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
     }
     
 

@@ -20,9 +20,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -33,10 +35,10 @@ import org.bukkit.util.Vector;
  * @author Eriol_Eandur
  */
 public class NMSUtil {
-    
+
     public static Class<?> getNMSClass(String name) throws ClassNotFoundException {
         String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-        return Class.forName("net.minecraft.server." + version + "." + name);
+        return Class.forName("net.minecraft." + name);
     }
 
     public static Class<?> getCraftBukkitClass(String name) throws ClassNotFoundException {
@@ -46,14 +48,14 @@ public class NMSUtil {
 
     public static void sendPacket(Player player, Object packet) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException, ClassNotFoundException {
         Object handle = player.getClass().getMethod("getHandle").invoke(player);
-        Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
-        playerConnection.getClass().getMethod("sendPacket", getNMSClass("Packet")).invoke(playerConnection, packet);
+        Object playerConnection = handle.getClass().getField("b").get(handle);
+        playerConnection.getClass().getMethod("a"/*"sendPacket"*/, getNMSClass("network.protocol.Packet")).invoke(playerConnection, packet);
     }
 
     public static Object getTileEntity(Block block) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, InstantiationException {
         Object nmsWorld = block.getWorld().getClass().getMethod("getHandle")
                                                           .invoke(block.getWorld());
-        Object blockPosition = NMSUtil.getNMSClass("BlockPosition").getConstructor(int.class,int.class,int.class)
+        Object blockPosition = NMSUtil.getNMSClass("core.BlockPosition").getConstructor(int.class,int.class,int.class)
                                       .newInstance(block.getX(),block.getY(),block.getZ());
         return nmsWorld.getClass().getMethod("getTileEntity", blockPosition.getClass())
                                   .invoke(nmsWorld, blockPosition);
@@ -62,14 +64,14 @@ public class NMSUtil {
     public static void updatePlayerChunks(Location low, Location high) {
         if(true) return; //not implemented in 1.14
         Object nmsWorld = NMSUtil.invokeCraftBukkit("CraftWorld","getHandle",null,low.getWorld());
-        Object pcm = NMSUtil.invokeNMS("WorldServer", "getPlayerChunkMap",null,nmsWorld);
+        Object pcm = NMSUtil.invokeNMS("server.level.WorldServer", "getPlayerChunkMap",null,nmsWorld);
         for(int x=low.getChunk().getX();x<=high.getChunk().getX();x++) {
             for(int z = low.getChunk().getZ();z<=high.getChunk().getZ();z++) {
-                Object pc = NMSUtil.invokeNMS("PlayerChunkMap","getChunk",
+                Object pc = NMSUtil.invokeNMS("server.level.PlayerChunkMap","getChunk",
                                               new Class[]{int.class,int.class},pcm,x, z);
                 if(pc!=null) {
-                    for(Object player: (Iterable)NMSUtil.getNMSField("PlayerChunk","players", pc)) {
-                        NMSUtil.invokeNMS("PlayerChunk", "sendChunk", null, pc, player);
+                    for(Object player: (Iterable)NMSUtil.getNMSField("server.level.PlayerChunk","players", pc)) {
+                        NMSUtil.invokeNMS("server.level.PlayerChunk", "sendChunk", null, pc, player);
                     }
                 }
             }
@@ -78,14 +80,14 @@ public class NMSUtil {
     
     public static void updatePlayerChunks(Player player, Location low, Location high) {
         Object nmsWorld = NMSUtil.invokeCraftBukkit("CraftWorld","getHandle",null,low.getWorld());
-        Object pcm = NMSUtil.invokeNMS("WorldServer", "getPlayerChunkMap",null,nmsWorld);
+        Object pcm = NMSUtil.invokeNMS("server.level.WorldServer", "getPlayerChunkMap",null,nmsWorld);
         for(int x=low.getChunk().getX();x<=high.getChunk().getX();x++) {
             for(int z = low.getChunk().getZ();z<=high.getChunk().getZ();z++) {
-                Object pc = NMSUtil.invokeNMS("PlayerChunkMap","getChunk",
+                Object pc = NMSUtil.invokeNMS("server.level.PlayerChunkMap","getChunk",
                                               new Class[]{int.class,int.class},pcm,x, z);
                 if(pc!=null) {
                     Object nmsPlayer = NMSUtil.invokeCraftBukkit("entity.CraftPlayer", "getHandle", null, player);
-                    NMSUtil.invokeNMS("PlayerChunk", "sendChunk", null, pc, nmsPlayer);
+                    NMSUtil.invokeNMS("server.level.PlayerChunk", "sendChunk", null, pc, nmsPlayer);
                     /*for(Object nmsPlayer: (Iterable)NMSUtil.getNMSField("PlayerChunk","players", pc)) {
                         if(player==null 
                                 || (NMSUtil.getCraftBukkitClass(("")NMSUtil.invokeNMS("EntityPlayer","getBukkitEntity",null,nmsPlayer)
@@ -194,16 +196,51 @@ public class NMSUtil {
     }
     
     public static Vector toVector(Object blockPosition) {
-        return new Vector((int) invokeNMS("BaseBlockPosition","getX",null,blockPosition),
-                          (int) invokeNMS("BaseBlockPosition","getY",null,blockPosition),
-                          (int) invokeNMS("BaseBlockPosition","getZ",null,blockPosition));
+        return new Vector((int) invokeNMS("core.BaseBlockPosition","u"/*"getX"*/,null,blockPosition),
+                          (int) invokeNMS("core.BaseBlockPosition","v"/*"getY"*/,null,blockPosition),
+                          (int) invokeNMS("core.BaseBlockPosition","w"/*getZ"*/,null,blockPosition));
     }                       
     
     public static Object toBlockPosition(Vector vector) {
-        return createNMSObject("BlockPosition",
+        return createNMSObject("core.BlockPosition",
                                new Class[]{int.class,int.class,int.class},
                                vector.getBlockX(),
                                vector.getBlockY(),
                                vector.getBlockZ());
+    }
+    
+    public static void calcLight(Location loc) {
+        Object blockPosition = NMSUtil.createNMSObject("core.BlockPosition", new Class[]{int.class,int.class,int.class},
+                                                       loc.getBlockX(),loc.getBlockY(), loc.getBlockZ());
+//Logger.getGlobal().info("blocPosition "+blockPosition);
+        Chunk chunk = loc.getChunk();
+        Object nmsChunk = NMSUtil.invokeCraftBukkit("CraftChunk", "getHandle", new Class[0], chunk);
+//Logger.getGlobal().info("nmsChunk"+nmsChunk);
+        Object worldServer = NMSUtil.getNMSField("world.level.chunk.Chunk","q", nmsChunk);
+
+        Object lightEngine = NMSUtil.invokeNMS("world.level.World", "l_", new Class[0], worldServer);
+        //Object lightEngine = NMSUtil.invokeNMS("world.level.chunk.Chunk", "e", new Class[0], nmsChunk);
+//Logger.getGlobal().info("sync "+Bukkit.isPrimaryThread());
+//Logger.getGlobal().info("lightEngine "+lightEngine);
+//Logger.getGlobal().info("getLight: "+NMSUtil.invokeNMS("LightEngine", "b", new Class[]{blockPosition.getClass(),int.class}, lightEngine, blockPosition, 0));
+        NMSUtil.invokeNMS("world.level.lighting.LightEngine", "a", new Class[]{blockPosition.getClass()}, lightEngine, blockPosition);
+    }
+    
+    public static void calcLight(Chunk chunk, List<Vector> positions) {
+        Object nmsChunk = NMSUtil.invokeCraftBukkit("CraftChunk", "getHandle", new Class[0], chunk);
+//Logger.getGlobal().info("nmsChunk"+nmsChunk);
+        Object worldServer = NMSUtil.getNMSField("world.level.chunk.Chunk","q", nmsChunk);
+
+        Object lightEngine = NMSUtil.invokeNMS("world.level.World", "l_", new Class[0], worldServer);
+        //Object lightEngine = NMSUtil.invokeNMS("world.level.chunk.Chunk", "e", new Class[0], nmsChunk);
+//Logger.getGlobal().info("sync "+Bukkit.isPrimaryThread());
+//Logger.getGlobal().info("lightEngine "+lightEngine);
+//Logger.getGlobal().info("getLight: "+NMSUtil.invokeNMS("LightEngine", "b", new Class[]{blockPosition.getClass(),int.class}, lightEngine, blockPosition, 0));
+        positions.forEach(pos -> {
+//Logger.getGlobal().info("blocPosition "+((chunk.getX()<<4)+pos.getBlockX())+" "+pos.getBlockY()+" "+((chunk.getZ()<<4)+pos.getBlockZ()));
+            Object blockPosition = NMSUtil.createNMSObject("core.BlockPosition", new Class[]{int.class,int.class,int.class},
+                                                           (chunk.getX() << 4) + pos.getBlockX(), pos.getBlockY(), (chunk.getZ() << 4) + pos.getBlockZ());
+            NMSUtil.invokeNMS("world.level.lighting.LightEngine", "a", new Class[]{blockPosition.getClass()/*,boolean.class*/}, lightEngine, blockPosition/*,true*/);
+        });
     }
 }

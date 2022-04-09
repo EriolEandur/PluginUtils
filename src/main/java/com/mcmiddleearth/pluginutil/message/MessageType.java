@@ -16,11 +16,11 @@
  */
 package com.mcmiddleearth.pluginutil.message;
 
-import lombok.Getter;
+
 import org.bukkit.ChatColor;
 
 /**
- * Konstants for fancy message types which will determine defaut color and prefix of the message.
+ * Constants for fancy message types which will determine default color and prefix of the message.
  * @author Eriol_Eandur
  */
 public enum MessageType {
@@ -36,9 +36,12 @@ public enum MessageType {
     HIGHLIGHT_NO_PREFIX (ChatColor.GOLD),
     WHITE               (ChatColor.WHITE);
     
-    @Getter
     private final ChatColor baseColor;
-    
+
+    public ChatColor getBaseColor() {
+        return baseColor;
+    }
+
     private MessageType(ChatColor color) {
         baseColor = color;
     }

@@ -16,7 +16,6 @@
  */
 package com.mcmiddleearth.pluginutil.region;
 
-import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.util.Vector;
@@ -27,7 +26,6 @@ import org.bukkit.util.Vector;
  */
 public class CuboidRegion extends Region{
  
-    @Getter
     private Vector minCorner, maxCorner;
     
     public CuboidRegion(Location location, com.sk89q.worldedit.regions.CuboidRegion weRegion) {
@@ -48,7 +46,15 @@ public class CuboidRegion extends Region{
         minCorner = min;
         maxCorner = max;
     }
-    
+
+    public Vector getMinCorner() {
+        return minCorner;
+    }
+
+    public Vector getMaxCorner() {
+        return maxCorner;
+    }
+
     @Override
     public boolean isInside(Location loc) {
         return this.isNear(loc,0);
